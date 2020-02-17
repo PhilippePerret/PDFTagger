@@ -11,7 +11,7 @@ class PDFMask {
   static onClick(ev){
     const top = ev.offsetY + UI.secDocument.scrollTop
     log("Je clique sur le masque à ", top)
-    PdfDocument.addTagAt({top:top})
+    PdfDocument.addTagAt({top:top, left:ev.clientX /* pour placer l'éditeur */})
     return stopEvent(ev)
   }
 

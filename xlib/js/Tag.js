@@ -70,8 +70,9 @@ class Tag {
     const tag = new Tag(data)
     tag.build()
     // Pour le moment, on sauve les commentaires dès qu'on ajoute
-    // un tag
-    this.save()
+    // un tag. NON, ça sera fait après l'édition
+    // this.save()
+    tag.edit({top:data.top, left:data.left})
     return tag
   }
 
@@ -106,6 +107,10 @@ class Tag {
   build(){
     const div = DCreate('DIV', {class:`tag ${this.type}`, style:`top:${this.top - 10}px;`, inner:this.content})
     UI.bandeSensible.appendChild(div)
+  }
+
+  edit(options){
+    TagEditor.edit(this, options)
   }
 
   /**

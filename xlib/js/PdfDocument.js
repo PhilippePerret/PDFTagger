@@ -13,7 +13,7 @@ class PdfDocumentClass {
       clientY: ev.clientY
     })
 
-    this.addTagAt({top: ev.offsetY})
+    this.addTagAt({top: ev.offsetY, left:ev.clientX})
     return stopEvent(ev)
   }
 
