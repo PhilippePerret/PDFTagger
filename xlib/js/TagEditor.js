@@ -64,6 +64,7 @@ class TagEditor {
     this.commentField.focus()
     this.commentField.select()
   }
+
   hide(){
     this.obj.classList.add('noDisplay')
   }
@@ -74,6 +75,12 @@ class TagEditor {
 
   onOK(ev){
     log("Je dois enregistrer les données")
+    this.hide()
+    return stopEvent(ev)
+  }
+
+  onCancel(ev){
+    log("Je renonce à l'édition")
     this.hide()
     return stopEvent(ev)
   }
@@ -92,7 +99,7 @@ class TagEditor {
             DCreate('DIV', {class:'title', inner: `Édition tag #${this.tag.id}`})
           , DCreate('DIV', {class:'content', inner: [
                 DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
-              , DCreate('TEXTAREA', {class:'comment', name:'comment'})
+              , DCreate('TEXTAREA', {class:'comment', name:'comment', inner:"Commentaire par défaut"})
               , DCreate('DIV', {class:'explication', inner: "<code>⌘↩︎</code> (ou <code>⌃↩︎</code>) pour “OK”"})
             ]})
           , DCreate('DIV', {class:'buttons', inner: [
@@ -109,15 +116,14 @@ class TagEditor {
   }
 
   onKeyPress(ev){
-    stopEvent(ev)
     // console.log("Touche pressée : ", ev.key)
     switch(ev.key){
       case 'Enter':
         if (ev.metaKey) {
           return this.onOK(ev)
-          return false
         } else { return true }
-
+      case 'Escape':
+        return this.onCancel(ev)
       default:
         return true
     }

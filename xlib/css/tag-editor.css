@@ -1,7 +1,7 @@
 .tag-editor {
   position:fixed;
   background-color:white;
-  box-shadown:5px 7px 7px 3px rgb(165, 165, 165);
+  box-shadow:5px 7px 7px 3px rgb(165, 165, 165);
   border-radius: 1em;
   width: 300px;
   font-family: Arial, Helvetica;
@@ -13,6 +13,7 @@
   color:white;
   padding:1em;
   margin-bottom:1em;
+  -webkit-user-select:none;
 }
 .tag-editor div.content {
   min-height: 100px;
