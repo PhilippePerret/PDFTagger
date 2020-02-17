@@ -17,7 +17,8 @@ class UI {
     const Ajout = 4 + 100 // pour bien voir la fin
     log("innerHeight", window.innerHeight)
     log("footerHeight", footerHeight)
-    const HContainer = `${WHeight - footerHeight - Ajout}px`
+    this._maxtop = WHeight - footerHeight - Ajout ;
+    const HContainer = `${this.maxTop}px`
     $('section#pdf-document').css('height', HContainer)
     $('div#container').css('height', HContainer)
 
@@ -59,6 +60,10 @@ class UI {
     this.maskPDF.addEventListener('mousedown',    PDFMask.onMouseDown.bind(PDFMask))
     this.maskPDF.addEventListener('mouseup',      PDFMask.onMouseUp.bind(PDFMask))
     this.maskPDF.addEventListener('mousemove',    PDFMask.onMouseMove.bind(PDFMask))
+  }
+
+  static get maxTop(){
+    return this._maxtop || (this._maxtop = 300)
   }
 
   static get maskPDF(){

@@ -55,6 +55,11 @@ class TagEditor {
         this.obj.style.left = `${options.left}px`
       }
     }
+    // Rectifier si l'éditeur se trouve trop bas
+    if ( this.obj.offsetTop > UI.maxTop ) {
+      this.obj.style.top = 'auto'
+      this.obj.style.bottom = `${UI.maxTop}px`
+    }
   }
   hide(){
     this.obj.classList.add('noDisplay')
@@ -85,6 +90,7 @@ class TagEditor {
           , DCreate('DIV', {class:'content', inner: [
                 DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
               , DCreate('TEXTAREA', {class:'comment', name:'comment'})
+              , DCreate('DIV', {class:'explication', inner: "<code>⌘↩︎</code> (ou <code>⌃↩︎</code>) pour “OK”"})
             ]})
           , DCreate('DIV', {class:'buttons', inner: [
               DCreate('BUTTON', {type:'button', class:'btn-ok', inner:'OK'})
@@ -96,6 +102,27 @@ class TagEditor {
   }
   observe(){
     DGet('.btn-ok', this.obj).addEventListener('click', this.onOK)
+    this.commentField.addEventListener('keypress', this.onKeyPress.bind(this))
+  }
+
+  onKeyPress(ev){
+    stopEvent(ev)
+    // console.log("Touche pressée : ", ev.key)
+    switch(ev.key){
+      case 'Enter':
+        if (ev.metaKey) {
+          return this.onOK(ev)
+          return false
+        } else { return true }
+
+      default:
+        return true
+    }
+  }
+
+
+  get commentField(){
+    return this._commentfield || (this._commentfield = DGet('textarea.comment',this.obj))
   }
   get obj(){
     return this._obj || (this._obj = DGet(`div#${this.domId}`))

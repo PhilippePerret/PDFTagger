@@ -53,7 +53,7 @@ const Flash = {
 
   , open: function(){
       this.old_onkeypress = window.onkeypress ;
-      window.onkeypress = $.proxy(Flash,'onKeypress');
+      window.onkeypress = Flash.onKeypress.bind(Flash);
       this.show();
     }
   , close: function(){

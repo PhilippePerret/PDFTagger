@@ -1,3 +1,8 @@
 .smaller {font-size: 0.85em;}
 
 .noDisplay {display:none;}
+
+.explication {
+  font-size: 9pt;
+  font-style:italic;
+}
