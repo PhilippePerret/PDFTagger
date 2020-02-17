@@ -60,6 +60,9 @@ class TagEditor {
       this.obj.style.top = 'auto'
       this.obj.style.bottom = `${UI.maxTop}px`
     }
+    // On focus toujours dans le champ
+    this.commentField.focus()
+    this.commentField.select()
   }
   hide(){
     this.obj.classList.add('noDisplay')
