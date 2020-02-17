@@ -1,0 +1,12 @@
+<IfModule mod_headers.c>
+  Header set Connection keep-alive
+</IfModule>
+
+AddHandler cgi-script .rb
+Options +ExecCGI
+Options -Indexes
+
+DirectoryIndex index.rb
+
+Options +FollowSymlinks
+RewriteEngine on

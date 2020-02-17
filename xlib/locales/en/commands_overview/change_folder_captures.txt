@@ -1,0 +1,2 @@
+    Change the captures folder, i.e. the folder to receive
+    the screen shot.

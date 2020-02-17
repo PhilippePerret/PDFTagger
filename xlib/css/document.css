@@ -1,0 +1,46 @@
+div#container {
+  position:relative;
+  width:940px
+  overflow:hidden;
+}
+section#pdf-document {
+  position:relative;
+  width: 1120px;
+  -webkit-user-selection:none;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  margin-top:-6px; /* pour masquer la bande grise au-dessus */
+}
+
+/*
+  L'objet contenant le PDF
+*/
+section#pdf-document #pdfdocument {
+  width: inherit;
+  -webkit-user-selection:none;
+  width:800px;
+  height: 10000px;
+  overflow:hidden;
+  z-index:-1;
+}
+
+div#bande-sensible {
+  position:relative;
+  background-color: #999999;
+  width: 300px;
+  height: 10000px;
+  float:right;
+}
+
+div#mask-scrollbar {
+  position:fixed;
+  background:white;
+  z-index:0;
+}
+
+div#mask-pdf {
+  position:fixed;
+  opacity:0.1;
+  background-color:white;
+  height:2000px;
+}

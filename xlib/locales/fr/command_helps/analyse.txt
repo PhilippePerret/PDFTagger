@@ -1,0 +1,19 @@
+Ce script permet d'activer une analyse se trouvant dans le dossier
+`./_analyses_/`.
+
+USAGE
+-----
+  #{'> mus analyse "<Début_du_nom_de_dossier>"'.jaune}
+
+  Le #{'<Début_du_nom_de_dossier>'} est le nom ou le début du nom
+  du dossier dans le dossier général `_analyses_` qui devrait con-
+  tenir toutes vos analyses MuScaT. Si plusieurs dossiers ont le
+  même début, la commande permet de choisir lequel utiliser.
+
+  Si aucun argument n'est mis, c'est la liste de tous les dossiers
+  qui est présentée, pour en choisir une.
+
+OPTIONS
+-------
+
+  -h/--help   Pour obtenir l'aide de cette commande.

@@ -1,0 +1,35 @@
+[TO BE TRANSLATED]
+
+#{"> mus options \"nom analyse\"".jaune}
+
+Cette commande permet de voir où en est l'état des options
+d'une analyse. En l'absence du nom de l'analyse, c'est
+l'analyse cible qui est choisie.
+
+Avec des paramètres Elle permet également de définir les
+options :
+
+#{'> mus option <clé-option>=<valeur option>'.jaune}
+
+LISTE DES OPTIONS
+-----------------
+
+  On peut obtenir la liste de toutes les options avec l'option
+  de commande `--all` (ou `-a`) :
+
+  #{'> mus options -a'.jaune}
+  #{'> muscat options --all'.jaune}
+
+ACTION DE CHAQUE OPTION
+-----------------------
+
+  Pour voir ce que produit chaque option, ouvrir le manuel à
+  l'aide de #{'> muscat open manuel'.jaune}
+
+OPTIONS
+-------
+
+  -h/--help   Afficher cette aide sur la commande.
+
+  -a/--all    Afficher toutes les options, même celles non
+              définies.

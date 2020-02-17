@@ -1,0 +1,2 @@
+    Pour actualiser certains éléments de l'application, par
+    exemple le manuel ou la version courante.

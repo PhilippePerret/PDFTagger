@@ -1,0 +1,45 @@
+AIDE DE LA COMMANDE MUSCAT
+--------------------------
+
+Cette commande permet d'utiliser plus simplement l'application en
+ligne de commande grâce à un alias créé dans votre profil bash.
+Consulter le manuel pour le détail.
+
+En considérant que `mus` est votre alias, vous pouvez utiliser :
+
+#{'> mus commandes'.jaune}
+
+    Pour obtenir une liste de toutes les commandes
+
+#{'> mus open manuel'.jaune}
+
+    Pour ouvrir le manuel d'utilisation (pdf).
+
+#{'> mus create "Nouvelle Analyse"[ -o]'.jaune}
+
+    Pour créer une nouvelle analyse. Avec l'option `-o`, le dossier
+    s'ouvre dans le Finder.
+
+#{'> mus analyse "Nom de l’analyse"'.jaune}
+
+    Permet de lancer l'analyse portant le nom "Nom de l’analyse"
+    (qui peut être seulement le début du nom).
+    En ne mettant aucun argument et avec l'option `-l` ou `--list`
+    (`> mus analyse -l`) on obtient la liste de toutes les analyses
+    du dossier `_analyses_`.
+
+#{'> mus test -o'.jaune}
+
+    Lance les tests (en ouvrant le fichier test.html dans Firefox).
+
+CRÉATION DE LA COMMANDE
+-----------------------
+
+Sur Mac/Apple :
+
+  * ouvrir l'application Terminal,
+  * ouvrir le profil bash (`> vim ~/.bash_profile`),
+  * créer l'alias (ajouter une ligne dans le profil bash
+    avec `alias mus="path/to/MuScaT/utils/run.rb"`),
+  * sauver et fermer le profile bash (`:wq`),
+  * fermer la fenêtre et en rouvrir une autre.

@@ -1,0 +1,17 @@
+Ce script permet d'actualiser divers éléments de l'application.
+Pour le moment, il ne sert qu'à actualiser le manuel, en jouant :
+
+  #{'> mus update manuel'.jaune}
+
+USAGE
+-----
+
+  #{'> mus update <chose à updater>'.jaune}
+
+  où <chose à updater> peut être :
+
+    manuel    Le manuel en français.
+
+    manual    Le manuel en anglais.
+    
+    options   Le fichier des options de l'analyse courante.

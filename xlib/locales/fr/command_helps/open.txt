@@ -1,0 +1,28 @@
+Ce script permet d'ouvrir le dossier d'une analyse se trouvant dans
+le dossier `./_analyses_/`.
+
+Ou le manuel avec la commande :
+
+  #{'> mus open manuel'.jaune}
+
+USAGE
+-----
+  #{'> mus open "<Début_du_nom_de_dossier>"'.jaune}
+
+  Le #{'<Début_du_nom_de_dossier>'} est le nom ou le début du nom
+  du dossier dans le dossier général `_analyses_` qui devrait con-
+  tenir toutes vos analyses MuScaT. Si plusieurs dossiers ont le
+  même début, la commande permet de choisir lequel utiliser.
+
+  Si aucun argument n'est mis, c'est l'analyse courante qui est
+  ouverte. Pour obtenir plutôt la liste de toutes les analyses,
+  ajouter l'option `-a/--all`.
+
+OPTIONS
+-------
+
+  -h/--help   Pour afficher cette aide.
+
+  -l/--list   Au lieu d'ouvrir l'analyse courante, affiche la
+              liste de toutes les analyses du dossier, pour en
+              choisir une.

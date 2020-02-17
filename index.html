@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>MuScaT</title>
+    <link rel="shortcut icon" href="favicon/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="xlib/js/system/jquery-min.js"></script>
+    <script type="text/javascript" src="xlib/js/system/jquery-ui-min.js"></script>
+    <script type="text/javascript" src="xlib/js/system/require.js"></script>
+    <script type="text/javascript" src="xlib/js/system/utils.js"></script>
+    <script type="text/javascript" src="xlib/js/system/Dom_utils.js"></script>
+    <script type="text/javascript" src="xlib/js/system/Flash.js"></script>
+    <script type="text/javascript" src="xlib/js/system/Cook.js"></script>
+    <script type="text/javascript" src="xlib/js/system/Ajax.js"></script>
+    <script type="text/javascript" src="xlib/js/system/miniClasses.js"></script>
+    <script type="text/javascript" src="xlib/js/system/Debug.js"></script>
+    <script type="text/javascript" src="xlib/js/UI.js"></script>
+    <script type="text/javascript" src="xlib/js/PdfDocument.js"></script>
+    <script type="text/javascript" src="xlib/js/Tag.js"></script>
+    <script type="text/javascript" src="xlib/js/PDFMask.js"></script>
+    <script type="text/javascript" src="xlib/js/IO.js"></script>
+    <script type="text/javascript" src="xlib/js/Locales.js"></script>
+    <script type="text/javascript" src="xlib/js/Errors.js"></script>
+    <script type="text/javascript" src="xlib/js/Historique.js"></script>
+    <script type="text/javascript" src="xlib/js/Mover.js"></script>
+    <script type="text/javascript" src="xlib/js/MEvents.js"></script>
+    <script type="text/javascript" src="xlib/js/Options_data.js"></script>
+    <script type="text/javascript" src="xlib/js/Options.js"></script>
+    <script type="text/javascript" src="xlib/js/main.js"></script>
+    <script type="text/javascript" src="xlib/js/system/LANG.js"></script>
+    <link rel="stylesheet" href="xlib/css/common.css" />
+    <link rel="stylesheet" href="xlib/css/ui.css" />
+    <link rel="stylesheet" href="xlib/css/document.css" />
+    <link rel="stylesheet" href="xlib/css/tags.css" />
+  </head>
+  <body style="overflow:hidden;margin:0;">
+    <div id="container">
+      <section id="pdf-document">
+        <div id="bande-sensible"></div>
+        <!-- <embed id="pdfdocument" type="application/pdf" src="document.pdf#toolbar=0&navpanes=0&scrollbar=0" /> -->
+        <div id="mask-pdf"></div>
+        <div id="mask-scrollbar"></div>
+        <object id="pdfdocument" type="application/pdf" width="800" data="__DOC__/document.pdf#scrollbar=0&toolbar=0&navpanes=0">
+          <p>Insert your error message here, if the PDF cannot be displayed.</p>
+        </object>
+
+      </section>
+    </div>
+
+
+    <section id="footer">
+      <span id="message">&nbsp;</span>
+    </section>
+    <!-- Ne surtout pas supprimer la balise ci-dessous, elle sert pour les tests -->
+    <!-- TESTS -->
+  </body>
+</html>

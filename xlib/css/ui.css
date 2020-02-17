@@ -1,0 +1,106 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 21.01cm;
+  background-color: #DDDDDD;
+}
+
+body, body * {
+  -webkit-user-select: none;
+}
+
+a, a:link, a:hover, a:visited {
+  text-decoration: none;
+  color: #000099;
+  font-family: Arial, Helvetica;
+}
+
+.displayed {display: block;}
+.undisplayed, .noDisplay {display: none;}
+
+
+section#tools {
+  background-color: #CCFFCC;
+  text-align: left;
+  position: fixed;
+  border-radius: 1em;
+  text-align: left;
+  padding:  0.8em;
+  left: 10px;
+  top: 10px;
+  z-index: 1000; /* au-dessus de tout */
+}
+section#tools.closed {
+  padding: 0.3em;
+}
+/* Quand les outils sont affichés */
+section#tools.opened {
+  /* background-color: #EEEEEE; */
+  background-color: #666666;
+  min-width: 250px;
+  min-height: 300px;
+}
+
+section#tools div#tools-container
+{
+  background-color: #EEEEEE;
+  border: 2px solid #222222;
+  min-height: 250px;
+}
+
+section#tools fieldset {
+  margin: 1em 0;
+  border-width: 1px;
+  border-color: #CCCCCC;
+}
+section#tools fieldset legend {
+  font-style: italic;
+  color: #555555;
+}
+section#tools fieldset button {
+  margin: 0.5em 0;
+}
+/* Quand les outils sont masqués */
+section#tools.closed div#picto_tools {
+  display: block;
+}
+section#tools.closed .masked {
+  display: none;
+}
+
+section#tools.opened .masked {
+  display: block;
+  text-align: left;
+  background-color: white;
+}
+
+section#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  background-color: #CCCCCC;
+  padding: 2px 8px;
+  z-index: 500;
+}
+section#footer span#message {
+  font-family: 'Courier New', 'Courier';
+  font-size: 11pt;
+}
+
+section#footer #message.warning {
+  color: red;
+  background-color: #FFCCCC;
+}
+section#footer #message.notice {
+  color: inherit;
+  background-color: inherit;
+}
+
+
+button, select, select option {
+  font-size: inherit;
+}
+
+.right {text-align: right;}
+.center {text-align: center;}

@@ -1,0 +1,42 @@
+Ce script permet de définir le dossier qui va recevoir les captures
+écran, ou de le remettre à sa valeur par défaut.
+
+USAGE
+-----
+  #{'> mus change_folder_captures[ ./chemin/vers/dossier][ options][-h]'.jaune}
+
+  Le dossier `chemin/vers/dossier` devient le dossier qui va rece-
+  voir toutes les captures. S'il n'est pas défini, c'est le dossier
+  par défaut (le bureau) qui est remis.
+
+  Les #{'options'.jaune} peuvent être `-mk` qui indique qu'il faut
+  construire le dossier s'il n'existe pas.
+
+  #{'-h'.jaune} ou #{'--help'.jaune} à la fin de la ligne indique
+  qu'il faut afficher cette aide.
+
+ASTUCE
+------
+
+  Le chemin vers le dossier peut être obtenu simplement en glissant
+  le dossier dans la fenêtre du Terminal (ou la console) après le
+  texte `change_folder_captures ` (ne pas oublier l'espace au
+  bout avant de glisser le dossier).
+
+EXEMPLES
+--------
+
+  #{'> cd /Users/chezmoi/Programmes/MuScaT
+  > mus change_folder_captures /Users/chezmoi/Music/Analyses/ -mk'.jaune}
+
+  Le dossier `~/Music/Analyses` devient le dossier où sont enregis-
+  trées les captures d'écran.
+  Le dossier est construit s'il n'existe pas (option `-mk`).
+
+  #{'> muscat utils/change_folder_captures'.jaune}
+
+  Le dossier des captures d'écran est remis à sa valeur par défaut.
+
+  #{'> mus utils/change_folder_captures -h'.jaune}
+
+  Affiche cette aide.

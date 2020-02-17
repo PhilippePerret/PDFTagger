@@ -1,0 +1,2 @@
+    Pour régler les valeurs de l'analyse, à commencer par les
+    diverses options.

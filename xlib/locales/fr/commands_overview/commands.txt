@@ -1,0 +1,1 @@
+    Affiche la liste des commandes en en donnant un aperçu.

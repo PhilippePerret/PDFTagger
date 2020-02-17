@@ -1,0 +1,60 @@
+[TO BE TRANSLATED]
+
+Ce script permet de renommer tous les fichiers images d'un dossier
+en les indexant de 1 en 1.
+
+USAGE
+-----
+  #{'> mus rename_images[ <chemin/vers/dossier>][ <affixe nom>][ <clé classement>]'.jaune}
+
+  Le #{'chemin/vers/dossier'} est le chemin relatif ou absolu
+  qui conduit au dossier contenant les images à renommer. Si
+  une analyse est définie, c'est son dossier images qui est
+  choisi par défaut.
+
+  L'#{'`<affixe nom>`'.jaune} est le nom sans l'extension. Par exemple, si
+  l'affixe est défini à 'mes-images', les fichiers seront re-
+  nommés : "mes-images-1.png", "mes-images-2.png" etc. L'exten-
+  sion est celle du fichier original.
+
+  Si la #{'<clé classement>'.jaune} est `-name`, le classement des fichiers ne
+  se fait plus par la date de création (comportement normal) mais
+  par le nom du fichier.
+
+ASTUCE
+------
+
+  Le chemin vers le dossier peut être obtenu simplement en glissant
+  le dossier dans la fenêtre du Terminal (ou la console) après le
+  texte `rename_images ` (ne pas oublier l'espace au bout avant
+  de glisser le dossier).
+  Mais le mieux est quand même d'utiliser une analyse cible en
+  faisant :
+    #{'> mus use "Mon analyse"'.jaune}
+    #{'> mus rename_images "image-score"'.jaune}
+
+
+EXEMPLES
+--------
+
+  #{'> mus rename_images /Users/chezmoi/Music/Analyses/monAnalyse/images'.jaune}
+
+  Ci-dessus, tous les fichiers du dossier `monAnalyse/images` se-
+  ront renommés en "image-X.png" dans l'ordre de leur création.
+
+  #{'> mus use "Mon analyse"'.jaune}
+  #{'> mus rename_images "mozart-sonata" -name'.jaune}
+
+  Ci-dessus, tous les fichiers du dossier `monAnalyse/images` se
+  trouvant dans mes analyses de Mozart, au format `.jpg`, seront
+  renommés 'mozart-sonata-1.jpg', 'mozart-sonata-2.jpg', ...
+  'mozart-sonata-N.jpg' en les classant par leur nom (`-name`).
+
+  Noter le premier paramètre ("mozart-sonata") qui définit l'affi-
+  xe des fichiers finaux et le deuxième paramètre ("-name") qui
+  modifie la clé de classement des fichiers.
+
+OPTIONS
+-------
+
+  -h/--help   Pour afficher cette aide de la commande.

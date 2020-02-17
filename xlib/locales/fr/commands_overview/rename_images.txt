@@ -1,0 +1,2 @@
+    Pour renommer séquentiellement toutes les images de
+    l'analyse (après capture des systèmes, par exemple).

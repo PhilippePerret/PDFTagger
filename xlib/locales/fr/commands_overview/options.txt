@@ -1,0 +1,2 @@
+    Pour obtenir des informations sur les options de l'analyse
+    courante.

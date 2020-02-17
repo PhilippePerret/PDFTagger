@@ -1,0 +1,2 @@
+    Pour déterminer l'analyse “cible” qui sera utilisée par
+    toutes les autres commandes.

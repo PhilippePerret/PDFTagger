@@ -1,0 +1,2 @@
+    Définit le dossier des captures, c'est-à-dire le dossier
+    dans lequel vont s'enregistrer les captures d'écran.

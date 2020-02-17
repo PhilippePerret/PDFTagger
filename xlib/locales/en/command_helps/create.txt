@@ -1,0 +1,18 @@
+[TO BE TRANSLATED]
+
+Ce script permet de créer une nouvelle analyse dans le dossier
+`analyses` de MuScaT.
+
+USAGE
+-----
+  #{'> mus[cat] create.rb "<nom analyse>"'.jaune}
+
+  Le #{'<nom analyse>'} est le nom que prendra le dossier principale
+  de l'analyse. Il faut le mettre entre guillemets s'il contient des
+  espaces mais, de toutes façons, les espaces seront toujours rem-
+  placées par des traits plats.
+
+OPTIONS
+-------
+
+  -h/--help   Obtenir cette aide.
