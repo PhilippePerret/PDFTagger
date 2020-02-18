@@ -57,8 +57,8 @@ class TagEditor {
   *** --------------------------------------------------------------------- */
 
   constructor(tag, params){
-    this.tag = tag
-
+    this.tag  = tag
+    this.id   = Number(new Date())
     this.onOK = this.onOK.bind(this)
   }
 
@@ -132,7 +132,7 @@ class TagEditor {
           {prop:'type',       type:'string',  fieldProp:'value'}
         , {prop:'content',    type:'string',  fieldProp:'value'}
         , {prop:'intensity',  type:'number',  fieldProp:'value'}
-        , {prop:'fixed',      type:'boolean', fieldProp:'check'}
+        , {prop:'fixed',      type:'boolean', fieldProp:'checked'}
       ]
     } return this._properties;
   }
@@ -142,7 +142,7 @@ class TagEditor {
   **/
   setFormValues(){
     this.constructor.PROPERTIES.map(dprop => {
-      this[`${dprop.prop}Field`][dprop.fieldProp] = this.tag[dprop.prop]
+      this[`${dprop.prop}Field`][dprop.fieldProp] = this.tag[dprop.prop].value
     })
   }
 
@@ -180,10 +180,14 @@ class TagEditor {
                 DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
               , DCreate('TEXTAREA', {class:'comment', name:'comment', inner:"Commentaire par défaut"})
               , DCreate('DIV', {class:'explication', inner: "<code>⌘↩︎</code> (ou <code>⌃↩︎</code>) pour “OK”"})
-              , DCreate('LABEL', {inner: "Intensité du problème : "})
-              , DCreate('SELECT', {class:'intensity', inner:this.constructor.OptionsIntensity, label:'Intensité'})
-              , DCreate('INPUT', {type:'CHECKBOX', class:'fixed', name:'fixed'})
-              , DCreate('LABEL', {inner:'corrigé'})
+              , DCreate('DIV', {class:'row', inner:[
+                    DCreate('LABEL', {inner: "Intensité du problème : "})
+                  , DCreate('SELECT', {class:'intensity', inner:this.constructor.OptionsIntensity, label:'Intensité'})
+                ]})
+              , DCreate('DIV', {class:'row', inner:[
+                    DCreate('INPUT', {type:'CHECKBOX', id:this.fixedCbId, class:'fixed', name:'fixed'})
+                  , DCreate('LABEL', {inner:'corrigé', for:this.fixedCbId})
+                ]})
             ]})
           , DCreate('DIV', {class:'buttons', inner: [
               DCreate('BUTTON', {type:'button', class:'btn-ok', inner:'OK'})
@@ -197,6 +201,14 @@ class TagEditor {
     DGet('.btn-ok', this.obj).addEventListener('click', this.onOK)
     this.contentField.addEventListener('keypress', this.onKeyPress.bind(this))
   }
+
+  get fixedCbId(){
+    return this._fixedcbid || (this._fixedcbid = `fixed-cb-${this.id}`)
+  }
+
+  /*
+      Event methods
+  */
 
   onKeyPress(ev){
     // console.log("Touche pressée : ", ev.key)

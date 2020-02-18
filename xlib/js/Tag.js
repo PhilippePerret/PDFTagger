@@ -69,9 +69,7 @@ class Tag {
     data.content || (data.content = "Un commentaire sur le PDF")
     const tag = new Tag(data)
     tag.build()
-    // Pour le moment, on sauve les commentaires dès qu'on ajoute
-    // un tag. NON, ça sera fait après l'édition
-    // this.save()
+    // On met le tag en édition pour pouvoir le sauver ensuite
     tag.edit({top:data.top, left:data.left})
     return tag
   }
@@ -83,10 +81,10 @@ class Tag {
     nouvel item (et donc enregistre la nouvelle liste)
   **/
   static addItem(tag){
-    tag.id = this.nextId()
+    tag.id.value = this.nextId()
     // log("this.items = ", this.items)
     this.items.push(tag)
-    this.table.set(tag.id, tag)
+    this.table.set(tag.id.value, tag)
   }
 
   static nextId(){
@@ -100,7 +98,7 @@ class Tag {
     *
   *** --------------------------------------------------------------------- */
   constructor(data){
-    for(var k in data) this[`_${k}`] = data[k] ;
+    for(var k in data) this[k].value = data[k] ;
     this.set(data, /* prop trait plat */ true, /* save = */ false)
     this.constructor.addItem(this)
 
@@ -116,15 +114,20 @@ class Tag {
     Pour définir ou redéfinir les données
   **/
   set(data, propTraitPlat = false, saveIfChanged = false){
-    let hasChanged = false ;
+    let tagHasChanged = false ;
     for(var k in data){
-      var oldValue = this[`_${k}`]
+      let tprop = this[k]
+      var oldValue = tprop._value
       var newValue = data[k]
-      if ( oldValue != newValue ) hasChanged = true
-      let prop = propTraitPlat ? `_${k}` : k
-      this[prop] = data[k]
+      let propHasChanged = oldValue != newValue
+      tprop[propTraitPlat?'_value':'value'] = data[k]
+      // En cas de changement de valeur
+      if ( propHasChanged ) {
+        tagHasChanged = true
+        tprop.domUpdate()
+      }
     }
-    if ( hasChanged && saveIfChanged ){
+    if ( tagHasChanged && saveIfChanged ){
       log("des valeurs ont changées, je dois enregistrer la nouvelle donnée.")
       this.constructor.save()
     }
@@ -133,15 +136,25 @@ class Tag {
   /**
     Retourne le code pour enregistrement
   **/
+  static get SAVED_PROPERTIES(){
+    if (undefined === this._savedproperties){
+      this._savedproperties = [
+          {id:'id'        , type:'number',  required:true}
+        , {id:'type'      , type:'string',  required:true}
+        , {id:'content'   , type:'string',  required:true}
+        , {id:'intensity' , type:'number',  required:true}
+        , {id:'top'       , type:'number',  required:true}
+        , {id:'fixed'     , type:'boolean', required:true}
+        , {id:'date'      , type:'number',  required:true}
+      ]
+    } return this._savedproperties ;
+  }
   get toJson(){
-    return {
-        id:       this.id
-      , type:     this.type
-      , content:  this.content
-      , top:      this.top
-      , fixed:    this.fixed
-      , date:     this.date
-    }
+    var h = {}
+    this.constructor.SAVED_PROPERTIES.forEach( dprop => {
+      Object.assign(h, {[dprop.id]: this[dprop.id].value})
+    })
+    return h
   }
 
   /*
@@ -163,15 +176,23 @@ class Tag {
 
   build(){
     const div = DCreate('DIV', {
-        class:`tag ${this.type}`
-      , style:`top:${this.top - 10}px;`
+        class:`tag ${this.type.value}`
+      , style:`top:${this.top.value - 10}px;`
       , inner: [
-            DCreate('SPAN', {class:'content',   inner:this.content})
-          , DCreate('SPAN', {class:'intensity', inner:String(this.intensity)})
+            DCreate('SPAN', {class:'intensity'})
+          , DCreate('SPAN', {class:`fixed`})
+          , DCreate('SPAN', {class:'content'})
         ]})
     this._obj = div
     UI.bandeSensible.appendChild(div)
+    this.peuple()
     this.observe()
+  }
+
+  peuple(){
+    this.content.domUpdate()
+    this.fixed.domUpdate()
+    this.intensity.domUpdate()
   }
 
   observe(){
@@ -182,39 +203,60 @@ class Tag {
       Properties
   */
 
-  get id()  {return this._id}
-  set id(v) {this._id = v}
-
-  get type()  {return this._type}
-  set type(v) {this._type = v; this.obj.className = `tag ${v}`}
-
-  get top() { return this._top }
-  set top(v){this._top = v}
-
-  get content() {return this._content}
-  set content(v){this._content = v; this.contentSpan.innerHTML = v}
-
-  get intensity() {return this._intensity || 1}
-  set intensity(v){this._intensity = v; this.intensitySpan.innerHTML = v}
-
-  // Pour savoir si la note a été corrigée
-  get fixed(){return this._fixed || false}
-  set fixed(v){this._fixed = v}
-
-  get date(){return this._date}
-  set date(v){this._date = v}
+  // NB: TagProperty est défini ci-dessous, pour le moment
+  get id(){return this._id || (this._id = new TagProperty(this, 'id'))}
+  get type(){return this._type || (this._type = new TagProperty(this, 'type'))}
+  get content(){return this._content || (this._content = new TagProperty(this, 'content'))}
+  get fixed(){return this._fixed || (this._fixed = new TagProperty(this, 'fixed'))}
+  get intensity(){return this._intensity || (this._intensity = new TagProperty(this, 'intensity'))}
+  get top(){return this._top || (this._top = new TagProperty(this, 'top'))}
+  get date(){return this._date || (this._date = new TagProperty(this, 'date'))}
 
   /*
       DOM properties
   */
-  get typeSpan(){
-    return this._typespan || (this._typespan = DGet('.type', this.obj))
-  }
-  get contentSpan(){
-    return this._contentspan || (this._contentspan = DGet('.content', this.obj))
-  }
-  get intensitySpan(){
-    return this._intensityspan || (this._intensityspan = DGet('.intensity', this.obj))
-  }
+
   get obj(){ return this._obj }
+}
+
+/** ---------------------------------------------------------------------
+  *
+  *   Class TagProperty
+  *   -----------------
+  *   Gestion des propriétés de tag
+  *
+*** --------------------------------------------------------------------- */
+class TagProperty {
+  constructor(tag, property){
+    this.tag = tag
+    this.property = this.prop = property
+  }
+  get value() { return this._value}
+  set value(v){ this._value = v}
+
+  domUpdate(){
+    if ( this.span ) this.span.innerHTML = this.mark
+    else { // Valeurs spéciales (sans champ)
+      switch(this.property){
+        case 'type':
+          this.obj.className = `tag ${this.value}`
+          break ;
+      }
+    }
+  }
+  get mark(){
+    switch(this.property){
+      case 'fixed':
+        return `<span style="color:${this.tag.fixed.value?'rgb(0, 237, 0)':'rgb(255, 101, 101)'};">◉</span>`
+      case 'intensity':
+        return '!'.padStart(this.tag.intensity.value,'!')
+      default:
+        return this.tag[this.property].value
+    }
+  }
+  get span(){
+    return this._span || (this._span = DGet(`.${this.property}`, this.obj))
+  }
+  // Raccourci vers l'objet DOM du tag
+  get obj(){ return this.tag.obj }
 }

@@ -38,3 +38,8 @@
 .tag-editor select.intensity {
   all:unset;
 }
+
+.tag-editor div.row {
+  margin: 0.5em 0;
+  border-top: 1px solid #CCC;
+}
