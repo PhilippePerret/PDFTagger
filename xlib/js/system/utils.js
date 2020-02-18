@@ -1,4 +1,11 @@
 
+function isMac(){
+  !!this.navigator.vendor.match('Apple')
+}
+function isWindows(){
+  return !isMac()
+}
+
 // Reçoit une valeur qui peut être un string ou un nombre et retourne une
 // dimension (ajoute 'px' si aucune unité n'est précisée)
 // Si ce n'est pas un nombre qui est fourni ou si l'unité est mauvaise,

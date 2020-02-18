@@ -40,6 +40,7 @@
 }
 
 .tag-editor div.row {
-  margin: 0.5em 0;
+  margin: 0.6em 0;
+  padding: 0.6em 0 0 0;
   border-top: 1px solid #CCC;
 }

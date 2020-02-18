@@ -179,7 +179,7 @@ class TagEditor {
           , DCreate('DIV', {class:'content', inner: [
                 DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
               , DCreate('TEXTAREA', {class:'comment', name:'comment', inner:"Commentaire par défaut"})
-              , DCreate('DIV', {class:'explication', inner: "<code>⌘↩︎</code> (ou <code>⌃↩︎</code>) pour “OK”"})
+              , DCreate('DIV', {class:'explication', inner: `<code>${isMac?'⌘↩︎':'⌃↩︎'}</code> = “OK”`})
               , DCreate('DIV', {class:'row', inner:[
                     DCreate('LABEL', {inner: "Intensité du problème : "})
                   , DCreate('SELECT', {class:'intensity', inner:this.constructor.OptionsIntensity, label:'Intensité'})
