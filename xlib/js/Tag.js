@@ -192,10 +192,10 @@ class Tag {
   set top(v){this._top = v}
 
   get content() {return this._content}
-  set content(v){this._content = v, this.contentSpan.inner = v}
+  set content(v){this._content = v; this.contentSpan.innerHTML = v}
 
   get intensity() {return this._intensity || 1}
-  set intensity(v){this._intensity = v, this.intensitySpan.inner = v}
+  set intensity(v){this._intensity = v; this.intensitySpan.innerHTML = v}
 
   // Pour savoir si la note a été corrigée
   get fixed(){return this._fixed || false}

@@ -142,7 +142,7 @@ class TagEditor {
   **/
   setFormValues(){
     this.constructor.PROPERTIES.map(dprop => {
-      this[`${dprop.prop}`][dprop.fieldProp] = this.tag[dprop.prop]
+      this[`${dprop.prop}Field`][dprop.fieldProp] = this.tag[dprop.prop]
     })
   }
 
@@ -152,7 +152,7 @@ class TagEditor {
   getFormValues(){
     var h = {}
     this.constructor.PROPERTIES.map(dprop => {
-      const value = this[`${dprop.prop}`][dprop.fieldProp]
+      let value = this[`${dprop.prop}Field`][dprop.fieldProp]
       switch(dprop.type){
         case 'string':  value = value.trim(); break;
         case 'number':  value = Number(value); break;
