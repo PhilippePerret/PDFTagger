@@ -4,10 +4,19 @@
   width:100%;
 }
 
-.tag.unc, .tag.unclear {
+.tag.ort /* faut d'orthographe */
+{
   background-color:rgba(255, 204, 214, 1);
   color:red;
 }
+
+.tag.unc, /* manque de clarté */
+.tag.unclear
+{
+  background-color:orange;
+  color:white;
+}
+
 
 .tag.com {
   background-color:green;

@@ -16,7 +16,7 @@ class Tag {
     Chargement de tous les tags
   **/
   static load(tags){
-    log("Chargement des tags", tags)
+    // log("Chargement des tags", tags)
     tags.forEach(dtag => new Tag(dtag))
   }
 
@@ -24,7 +24,7 @@ class Tag {
     Construction de tous les tags
   **/
   static build(){
-    log("Construction des tags ", this.items)
+    // log("Construction des tags ", this.items)
     this.items.forEach(tag => tag.build())
   }
 
@@ -101,16 +101,33 @@ class Tag {
   *** --------------------------------------------------------------------- */
   constructor(data){
     for(var k in data) this[`_${k}`] = data[k] ;
+    this.set(data, /* prop trait plat */ true, /* save = */ false)
     this.constructor.addItem(this)
-  }
 
-  build(){
-    const div = DCreate('DIV', {class:`tag ${this.type}`, style:`top:${this.top - 10}px;`, inner:this.content})
-    UI.bandeSensible.appendChild(div)
+    this.onClick = this.onClick.bind(this)
+
   }
 
   edit(options){
     TagEditor.edit(this, options)
+  }
+
+  /**
+    Pour définir ou redéfinir les données
+  **/
+  set(data, propTraitPlat = false, saveIfChanged = false){
+    let hasChanged = false ;
+    for(var k in data){
+      var oldValue = this[`_${k}`]
+      var newValue = data[k]
+      if ( oldValue != newValue ) hasChanged = true
+      let prop = propTraitPlat ? `_${k}` : k
+      this[prop] = data[k]
+    }
+    if ( hasChanged && saveIfChanged ){
+      log("des valeurs ont changées, je dois enregistrer la nouvelle donnée.")
+      this.constructor.save()
+    }
   }
 
   /**
@@ -122,22 +139,82 @@ class Tag {
       , type:     this.type
       , content:  this.content
       , top:      this.top
+      , fixed:    this.fixed
       , date:     this.date
     }
   }
+
+  /*
+      Events method
+  */
+
+  /**
+    Quand on clique sur le tag => édition
+  **/
+  onClick(ev){
+    stopEvent(ev)
+    this.edit({top:ev.clientY, left:ev.clientX})
+    return false
+  }
+
+  /*
+      DOM methods
+  */
+
+  build(){
+    const div = DCreate('DIV', {
+        class:`tag ${this.type}`
+      , style:`top:${this.top - 10}px;`
+      , inner: [
+            DCreate('SPAN', {class:'content',   inner:this.content})
+          , DCreate('SPAN', {class:'intensity', inner:String(this.intensity)})
+        ]})
+    this._obj = div
+    UI.bandeSensible.appendChild(div)
+    this.observe()
+  }
+
+  observe(){
+    this.obj.addEventListener('click', this.onClick)
+  }
+
+  /*
+      Properties
+  */
 
   get id()  {return this._id}
   set id(v) {this._id = v}
 
   get type()  {return this._type}
-  set type(v) {this._type = v}
+  set type(v) {this._type = v; this.obj.className = `tag ${v}`}
 
   get top() { return this._top }
   set top(v){this._top = v}
 
   get content() {return this._content}
-  set content(v){this._content = v}
+  set content(v){this._content = v, this.contentSpan.inner = v}
+
+  get intensity() {return this._intensity || 1}
+  set intensity(v){this._intensity = v, this.intensitySpan.inner = v}
+
+  // Pour savoir si la note a été corrigée
+  get fixed(){return this._fixed || false}
+  set fixed(v){this._fixed = v}
 
   get date(){return this._date}
   set date(v){this._date = v}
+
+  /*
+      DOM properties
+  */
+  get typeSpan(){
+    return this._typespan || (this._typespan = DGet('.type', this.obj))
+  }
+  get contentSpan(){
+    return this._contentspan || (this._contentspan = DGet('.content', this.obj))
+  }
+  get intensitySpan(){
+    return this._intensityspan || (this._intensityspan = DGet('.intensity', this.obj))
+  }
+  get obj(){ return this._obj }
 }
