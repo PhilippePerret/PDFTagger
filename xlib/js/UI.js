@@ -30,6 +30,9 @@ class UI {
 
     this.maskPDF.style.width = `${pdfw}px`
 
+    // On construit le tiroir d'outils
+    TiroirTools.build()
+
     this.observe()
   } // setInterface
 
@@ -59,6 +62,9 @@ class UI {
     this.maskPDF.addEventListener('mousedown',    PDFMask.onMouseDown.bind(PDFMask))
     this.maskPDF.addEventListener('mouseup',      PDFMask.onMouseUp.bind(PDFMask))
     this.maskPDF.addEventListener('mousemove',    PDFMask.onMouseMove.bind(PDFMask))
+    // Le tiroir amovible
+    // Pour le moment, en cliquant dessus, on l'ouvre/ferme
+    this.tiroirTools.addEventListener('click', TiroirTools.toggle.bind(TiroirTools))
   }
 
   static get maxTop(){
@@ -71,9 +77,14 @@ class UI {
   static get maskScrollbar(){
     return this._maskscrollbar || (this._maskscrollbar = DGet('#mask-scrollbar'))
   }
+
+  static get tiroirTools(){
+    return this._tiroirtools || (this._tiroirtools = DGet('#tiroir-tools'))
+  }
   static get bandeSensible(){
     return this._bandesensible || (this._bandesensible = DGet('#bande-sensible'))
   }
+
   static get pdfTag(){
     return this._pdftag || (this._pdftag = DGet('#pdfdocument'))
   }

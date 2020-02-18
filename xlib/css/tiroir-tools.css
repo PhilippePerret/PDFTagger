@@ -1,0 +1,38 @@
+section#tiroir-tools {
+  position:fixed;
+  top:0;
+  height:2000px;
+  width:400px;
+  background-color:white;
+  /* padding-left:50px; /* pour la poignée */ */
+  z-index:500;
+}
+
+section#tiroir-tools.opened {
+  right: 0px;
+  transition:1s;
+}
+
+section#tiroir-tools.closed {
+  right:-360px;
+  transition:1s;
+}
+
+
+section#tiroir-tools .main-handler {
+  position:absolute;
+  width:40px;
+  height:inherit;
+  background-color:rgb(148, 153, 144);
+}
+
+section#tiroir-tools div.types-support {
+  padding-left:50px; /* pour la poignée */
+}
+section#tiroir-tools div.types-support select {
+  /* width: 200px; */
+}
+section#tiroir-tools div.types-support span.label {
+  display:inline-block;
+  width: 84px;
+}

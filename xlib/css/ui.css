@@ -1,8 +1,9 @@
 body {
   margin: 0;
   padding: 0;
-  width: 21.01cm;
-  background-color: #DDDDDD;
+  width: 100%;
+  /* background-color: #DDDDDD; */
+  background-color: white;
 }
 
 body, body * {

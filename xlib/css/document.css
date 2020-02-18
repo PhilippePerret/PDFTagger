@@ -1,6 +1,6 @@
 div#container {
   position:relative;
-  width:940px
+  width:calc(100% - 420px);
   overflow:hidden;
 }
 section#pdf-document {

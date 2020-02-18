@@ -29,14 +29,28 @@
     <script type="text/javascript" src="xlib/js/Options_data.js"></script>
     <script type="text/javascript" src="xlib/js/Options.js"></script>
     <script type="text/javascript" src="xlib/js/main.js"></script>
+    <script type="text/javascript" src="xlib/js/TiroirTools.js"></script>
     <script type="text/javascript" src="xlib/js/system/LANG.js"></script>
     <link rel="stylesheet" href="xlib/css/common.css" />
     <link rel="stylesheet" href="xlib/css/ui.css" />
     <link rel="stylesheet" href="xlib/css/document.css" />
     <link rel="stylesheet" href="xlib/css/tags.css" />
     <link rel="stylesheet" href="xlib/css/tag-editor.css" />
+    <link rel="stylesheet" href="xlib/css/tiroir-tools.css" />
   </head>
   <body style="overflow:hidden;margin:0;">
+
+    <!--
+        TIROIR DES OUTILS
+    -->
+    <section id="tiroir-tools" class="opened">
+      <div class="main-handler"><!-- La poignée pour ouvrir/fermer --></div>
+      <div class="types-support"><!-- Pour mettre les lignes définissant les raccourcis types --></div>
+    </section>
+
+    <!--
+        CONTENEUR DU TEXTE PDF
+    -->
     <div id="container">
       <section id="pdf-document">
         <div id="bande-sensible"></div>
