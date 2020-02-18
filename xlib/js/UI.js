@@ -15,15 +15,15 @@ class UI {
     const WHeight = window.innerHeight
     const footerHeight = $('section#footer').height()
     const Ajout = 4 + 100 // pour bien voir la fin
-    log("innerHeight", window.innerHeight)
-    log("footerHeight", footerHeight)
+    // log("innerHeight", window.innerHeight)
+    // log("footerHeight", footerHeight)
     this._maxtop = WHeight - footerHeight - Ajout ;
     const HContainer = `${this.maxTop}px`
     $('section#pdf-document').css('height', HContainer)
     $('div#container').css('height', HContainer)
 
     const pdfw = this.pdfTag.offsetWidth - 20
-    log("Largeur pdfTag = ", pdfw)
+    // log("Largeur pdfTag = ", pdfw)
     this.maskScrollbar.style.left = `${pdfw}px`
     this.maskScrollbar.style.width = `20px`
     this.maskScrollbar.style.height = HContainer
@@ -53,7 +53,6 @@ class UI {
 
   static observe()
   {
-    log("this.pdfTag", this.pdfTag)
     this.bandeSensible.addEventListener('click',  PdfDocument.onClick.bind(PdfDocument))
     this.pdfTag.addEventListener('click',         PdfDocument.onClick.bind(PdfDocument))
     this.maskPDF.addEventListener('click',        PDFMask.onClick.bind(PDFMask))

@@ -24,6 +24,11 @@
   margin-top:0;
   text-align:right;
 }
+.tag-editor div.buttons button.btn-cancel {
+  float:left;
+  vertical-align:middle;
+}
+
 .tag-editor select.type {
   width:100%;
 }

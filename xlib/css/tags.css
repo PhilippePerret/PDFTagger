@@ -17,22 +17,35 @@
 /*
     Types des commentaires
 */
+.tag {
+  border-style: solid none solid none;
+  border-width: 1px 0 1px 0;
+}
+.tag.com {
+  color:black;
+  border-color:white;
+}
 
-.tag.ort /* faut d'orthographe */
-{
+.tag.ort /* faut d'orthographe */ {
   background-color:rgba(255, 204, 214, 1);
   color:red;
 }
 
-.tag.unc, /* manque de clarté */
-.tag.unclear
-{
+.tag.unc, /* manque de clarté */ {
   background-color:orange;
   color:white;
 }
 
+.tag.pos /* Commentaire positif */ {
+  background-color:#CCCCFF;
+  color:blue;
+}
 
-.tag.com {
-  background-color:rgb(0, 159, 0);
-  color:white;
+.tag.dro /* Commentaire sur drôle */ {
+  background-color:pink;
+}
+
+.tag.sty /* Commentaire problème de style */ {
+  background-color: #FFCCCC;
+  color:red;
 }

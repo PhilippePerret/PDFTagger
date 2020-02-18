@@ -12,6 +12,20 @@ class Tag {
     return this.table.get(tagId)
   }
 
+  static get SAVED_PROPERTIES(){
+    if (undefined === this._savedproperties){
+      this._savedproperties = [
+          {id:'id'        , type:'number',  required:true}
+        , {id:'type'      , type:'string',  required:true}
+        , {id:'content'   , type:'string',  required:true}
+        , {id:'intensity' , type:'number',  required:true}
+        , {id:'top'       , type:'number',  required:true}
+        , {id:'fixed'     , type:'boolean', required:true}
+        , {id:'date'      , type:'number',  required:true}
+      ]
+    } return this._savedproperties ;
+  }
+
   /**
     Chargement de tous les tags
   **/
@@ -121,34 +135,23 @@ class Tag {
       var newValue = data[k]
       let propHasChanged = oldValue != newValue
       tprop[propTraitPlat?'_value':'value'] = data[k]
-      // En cas de changement de valeur
-      if ( propHasChanged ) {
-        tagHasChanged = true
-        tprop.domUpdate()
-      }
+      if ( propHasChanged ) tagHasChanged = true ;
     }
+    tagHasChanged && this.domUpdate()
     if ( tagHasChanged && saveIfChanged ){
       log("des valeurs ont changées, je dois enregistrer la nouvelle donnée.")
       this.constructor.save()
     }
   }
 
+  domUpdate(){
+    this.peuple()
+    this.setClass()
+  }
+
   /**
     Retourne le code pour enregistrement
   **/
-  static get SAVED_PROPERTIES(){
-    if (undefined === this._savedproperties){
-      this._savedproperties = [
-          {id:'id'        , type:'number',  required:true}
-        , {id:'type'      , type:'string',  required:true}
-        , {id:'content'   , type:'string',  required:true}
-        , {id:'intensity' , type:'number',  required:true}
-        , {id:'top'       , type:'number',  required:true}
-        , {id:'fixed'     , type:'boolean', required:true}
-        , {id:'date'      , type:'number',  required:true}
-      ]
-    } return this._savedproperties ;
-  }
   get toJson(){
     var h = {}
     this.constructor.SAVED_PROPERTIES.forEach( dprop => {
@@ -193,6 +196,10 @@ class Tag {
     this.content.domUpdate()
     this.fixed.domUpdate()
     this.intensity.domUpdate()
+  }
+
+  setClass(){
+    this.obj.className = `tag ${this.type.value}`
   }
 
   observe(){
@@ -245,15 +252,26 @@ class TagProperty {
     }
   }
   get mark(){
+    const value = this.tag[this.property].value
     switch(this.property){
       case 'fixed':
-        return `<span style="color:${this.tag.fixed.value?'rgb(0, 237, 0)':'rgb(255, 101, 101)'};">◉</span>`
+        return `<span style="color:${value?'rgb(0, 237, 0)':'rgb(255, 101, 101)'};">◉</span>`
       case 'intensity':
-        return '!'.padStart(this.tag.intensity.value,'!')
+        var m = this.isPositive ? '❤️' : '🧨'
+        return value > 1 ? ''.padStart((value - 1)*2,m) : ''
       default:
-        return this.tag[this.property].value
+        return value
     }
   }
+
+  /**
+    +return+ true si c'est un commentaire positif, false dans le cas contraire
+    C'est en fonction du type qu'on le détermine
+  **/
+  get isPositive(){
+    return DATA_TAG_TYPES[this.tag.type.value].positive === true
+  }
+
   get span(){
     return this._span || (this._span = DGet(`.${this.property}`, this.obj))
   }

@@ -6,12 +6,14 @@
     Édition/création des tags de commentaires
   *
 *** --------------------------------------------------------------------- */
-const TAG_TYPES = {
+const DATA_TAG_TYPES = {
     'com': {id:'com', hname: 'Simple commentaire'}
   , 'ort': {id:'ort', hname: 'Faute d’orthographe'}
   , 'cri': {id:'cri', hname: 'Commentaire critique'}
-  , 'pos': {id:'pos', hname: 'Commentaire positif'}
+  , 'pos': {id:'pos', hname: 'Commentaire positif', positive:true}
   , 'unc': {id:'unc', hname: 'Passage peu clair'}
+  , 'sty': {id:'sty', hname: 'Problème de style'}
+  , 'dro': {id:'dro', hname: 'Marrant', positive:true}
 }
 class TagEditor {
 
@@ -38,19 +40,34 @@ class TagEditor {
   **/
   static get OptionsTypes(){
     if (undefined === this._optionstypes) {
-      this._optionstypes = Object.values(TAG_TYPES).map(dtype => DCreate('OPTION', {value:dtype.id, inner:dtype.hname}))
+      this._optionstypes = Object.values(DATA_TAG_TYPES).map(dtype => DCreate('OPTION', {value:dtype.id, inner:dtype.hname}))
     } return this._optionstypes ;
   }
 
   /**
     Les <options> pour les intensités
   **/
-  static get OptionsIntensity(){
-    if (undefined === this._optionsintensity) {
+  static get OptionsIntensityPos(){
+    if (undefined === this._optionsintensitypos) {
       const inten = [1,2,3,4,5]
-      this._optionsintensity = inten.map(i => DCreate('OPTION',{value:i, inner:String(i)}))
-    } return this._optionsintensity
+      this._optionsintensitypos = inten.map(i => {
+        var tit = 'normal'
+        if ( i > 1 ) { tit = ''.padStart((i - 1)*2,'❤️') }
+        return DCreate('OPTION',{value:i, inner:tit})}
+      )
+    } return this._optionsintensitypos
   }
+  static get OptionsIntensityNeg(){
+    if (undefined === this._optionsintensityneg) {
+      const inten = [1,2,3,4,5]
+      this._optionsintensityneg = inten.map(i => {
+        var tit = 'normal'
+        if ( i > 1 ) { tit = ''.padStart((i - 1)*2,'🧨') }
+        return DCreate('OPTION',{value:i, inner:tit})}
+      )
+    } return this._optionsintensityneg
+  }
+
   /** ---------------------------------------------------------------------
     *   INSTANCE
     *
@@ -59,7 +76,9 @@ class TagEditor {
   constructor(tag, params){
     this.tag  = tag
     this.id   = Number(new Date())
-    this.onOK = this.onOK.bind(this)
+
+    this.onOK     = this.onOK.bind(this)
+    this.onCancel = this.onCancel.bind(this)
   }
 
   /**
@@ -117,7 +136,6 @@ class TagEditor {
   }
 
   onCancel(ev){
-    log("Je renonce à l'édition")
     this.hide()
     return stopEvent(ev)
   }
@@ -181,8 +199,8 @@ class TagEditor {
               , DCreate('TEXTAREA', {class:'comment', name:'comment', inner:"Commentaire par défaut"})
               , DCreate('DIV', {class:'explication', inner: `<code>${isMac?'⌘↩︎':'⌃↩︎'}</code> = “OK”`})
               , DCreate('DIV', {class:'row', inner:[
-                    DCreate('LABEL', {inner: "Intensité du problème : "})
-                  , DCreate('SELECT', {class:'intensity', inner:this.constructor.OptionsIntensity, label:'Intensité'})
+                    DCreate('LABEL', {inner: "Intensité : "})
+                  , DCreate('SELECT', {class:'intensity', inner:this.constructor[`OptionsIntensity${this.isPositive?'Pos':'Neg'}`]})
                 ]})
               , DCreate('DIV', {class:'row', inner:[
                     DCreate('INPUT', {type:'CHECKBOX', id:this.fixedCbId, class:'fixed', name:'fixed'})
@@ -190,16 +208,23 @@ class TagEditor {
                 ]})
             ]})
           , DCreate('DIV', {class:'buttons', inner: [
-              DCreate('BUTTON', {type:'button', class:'btn-ok', inner:'OK'})
+                DCreate('BUTTON', {type:'button', class:'btn-cancel', inner:'Renoncer'})
+              , DCreate('BUTTON', {type:'button', class:'btn-ok', inner:'OK'})
             ]})
         ]
     })
     document.body.appendChild(div)
     this.observe()
   }
-  observe(){
-    DGet('.btn-ok', this.obj).addEventListener('click', this.onOK)
-    this.contentField.addEventListener('keypress', this.onKeyPress.bind(this))
+
+  updateMenuIntensity(){
+    const curValue = this.intensityField.value
+    this.intensityField.innerHTML = ''
+    log("isPositive = ", this.isPositive)
+    log("Ajout de ", this.constructor[`OptionsIntensity${this.isPositive?'Pos':'Neg'}`])
+    this.constructor[`OptionsIntensity${this.isPositive?'Pos':'Neg'}`]
+    .forEach( option => this.intensityField.appendChild(option) )
+    this.intensityField.value = curValue
   }
 
   get fixedCbId(){
@@ -209,6 +234,17 @@ class TagEditor {
   /*
       Event methods
   */
+
+  observe(){
+    DGet('.btn-ok', this.obj).addEventListener('click', this.onOK)
+    DGet('.btn-cancel', this.obj).addEventListener('click', this.onCancel)
+    this.contentField.addEventListener('keypress', this.onKeyPress.bind(this))
+    this.typeField.addEventListener('change', this.onChangeType.bind(this))
+  }
+
+  onChangeType(ev){
+    this.updateMenuIntensity()
+  }
 
   onKeyPress(ev){
     // console.log("Touche pressée : ", ev.key)
@@ -222,6 +258,21 @@ class TagEditor {
       default:
         return true
     }
+  }
+
+  /**
+    Retourne true si c'est un tag positif, false dans le cas contraire
+    Cette valeur est prise dans le menu du type du tag, car il peut être
+    différent de celui du tag édité
+  **/
+  get isPositive(){
+    var value ;
+    if ( this.obj /* si la boite est construite */ ) {
+      value = this.typeField.value
+    } else /* boite en construction */ {
+      value = this.tag.type.value
+    }
+    return DATA_TAG_TYPES[value].positive === true
   }
 
   get intensityField(){
