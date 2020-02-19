@@ -20,6 +20,7 @@ class Tag {
         , {id:'content'   , type:'string',  required:true}
         , {id:'intensity' , type:'number',  required:true}
         , {id:'top'       , type:'number',  required:true}
+        , {id:'heigth'    , type:'number',  required:true}
         , {id:'fixed'     , type:'boolean', required:true}
         , {id:'date'      , type:'number',  required:true}
       ]
@@ -123,7 +124,7 @@ class Tag {
       , date: Number(new Date())
     })
     data.type || (data.type = 'com')
-    data.content || (data.content = "Un commentaire sur le PDF")
+    data.content || (data.content = "Nouveau commentaire")
     delete data.left // pas besoin
     const tag = new Tag(data)
     tag.build({})
@@ -161,12 +162,16 @@ class Tag {
     this.set(data, /* prop trait plat */ true, /* save = */ false)
     this.constructor.addItem(this)
 
-    this.onClick = this.onClick.bind(this)
+    this.onMouseDown  = this.onMouseDown.bind(this)
+    this.onMouseUp    = this.onMouseUp.bind(this)
+    this.onMouseMove  = this.onMouseMove.bind(this)
 
   }
 
   edit(options){
+    log('-> edit')
     TagEditor.edit(this, options)
+    log('<- edit')
   }
 
   show(){ this.obj.classList.remove('noDisplay')}
@@ -213,14 +218,29 @@ class Tag {
   */
 
   /**
-    Quand on clique sur le tag => édition
-  **/
-  onClick(ev){
-    stopEvent(ev)
-    this.edit({top:ev.clientY, left:ev.clientX})
-    return false
-  }
 
+  **/
+  onMouseDown(ev){
+    this.mousedownTime = ev.timeStamp
+    ev.stopPropagation()
+  }
+  onMouseUp(ev){
+    ev.stopPropagation()
+    console.log({
+        'temps mousedown': this.mousedownTime
+      , 'temps mouseup':ev.timeStamp
+      , 'is click': (ev.timeStamp < this.mousedownTime + 1)
+    })
+    if ( ev.timeStamp < this.mousedownTime + 1500) {
+      // C'est un vrai click, pas un déplacement
+      this.edit()
+    } else {
+      return stopEvent(ev)
+    }
+  }
+  onMouseMove(ev){
+
+  }
   /*
       DOM methods
   */
@@ -250,8 +270,24 @@ class Tag {
     this.obj.className = `tag ${this.type.value}`
   }
 
+  onMove(ev, ui){
+    log('-> onMove')
+    this.top.value = ui.position.top
+    stopEvent(ev)
+    log('<- onMove')
+    return false
+  }
+
   observe(){
-    this.obj.addEventListener('click', this.onClick)
+    this.obj.addEventListener('mousedown', this.onMouseDown)
+    this.obj.addEventListener('mouseup', this.onMouseUp)
+    const dragData = {
+        axis:'y'
+      , stop: this.onMove.bind(this)
+      , stack:'.tag' // pour être toujours au-dessus des autres
+    }
+    // console.log("Drag data : ", dragData)
+    $(this.obj).draggable(dragData)
   }
 
   /*
@@ -265,6 +301,7 @@ class Tag {
   get fixed(){return this._fixed || (this._fixed = new TagProperty(this, 'fixed'))}
   get intensity(){return this._intensity || (this._intensity = new TagProperty(this, 'intensity'))}
   get top(){return this._top || (this._top = new TagProperty(this, 'top'))}
+  get height(){return this._height || (this._height = new TagProperty(this, 'height'))}
   get date(){return this._date || (this._date = new TagProperty(this, 'date'))}
 
   /*

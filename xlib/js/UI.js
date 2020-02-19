@@ -58,8 +58,18 @@ class UI {
 
   static observe()
   {
-    this.bandeSensible.addEventListener('click',  PdfDocument.onClick.bind(PdfDocument))
-    this.pdfTag.addEventListener('click',         PdfDocument.onClick.bind(PdfDocument))
+    /**
+     * On utilise mousedown et mouseup pour deux raisons :
+     *  a) pouvoir suspendre la propagation quand clique ou drag sur tag
+     *  b) prendre la valeur de départ et la valeur d'arrivée pour "trait"
+     */
+    this.bandeSensible.addEventListener('mousedown',  PdfDocument.onMouseDown.bind(PdfDocument))
+    this.bandeSensible.addEventListener('mouseup',    PdfDocument.onMouseUp.bind(PdfDocument))
+    this.bandeSensible.addEventListener('mousemove',  PdfDocument.onMouseMove.bind(PdfDocument))
+    this.pdfTag.addEventListener('mousedown',  PdfDocument.onMouseDown.bind(PdfDocument))
+    this.pdfTag.addEventListener('mouseup',    PdfDocument.onMouseUp.bind(PdfDocument))
+    this.pdfTag.addEventListener('mousemove',  PdfDocument.onMouseMove.bind(PdfDocument))
+    
     this.maskPDF.addEventListener('click',        PDFMask.onClick.bind(PDFMask))
     this.maskPDF.addEventListener('mousedown',    PDFMask.onMouseDown.bind(PDFMask))
     this.maskPDF.addEventListener('mouseup',      PDFMask.onMouseUp.bind(PDFMask))
