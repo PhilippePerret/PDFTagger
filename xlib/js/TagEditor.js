@@ -49,23 +49,22 @@ class TagEditor {
   **/
   static get OptionsIntensityPos(){
     if (undefined === this._optionsintensitypos) {
-      const inten = [1,2,3,4,5]
-      this._optionsintensitypos = inten.map(i => {
-        var tit = 'normal'
-        if ( i > 1 ) { tit = ''.padStart((i - 1)*2,'❤️') }
-        return DCreate('OPTION',{value:i, inner:tit})}
-      )
+      this._optionsintensitypos = this.buildMenuIntensityWith('❤️')
     } return this._optionsintensitypos
   }
   static get OptionsIntensityNeg(){
     if (undefined === this._optionsintensityneg) {
       const inten = [1,2,3,4,5]
-      this._optionsintensityneg = inten.map(i => {
-        var tit = 'normal'
-        if ( i > 1 ) { tit = ''.padStart((i - 1)*2,'🧨') }
-        return DCreate('OPTION',{value:i, inner:tit})}
-      )
+      this._optionsintensityneg = this.buildMenuIntensityWith('🧨')
     } return this._optionsintensityneg
+  }
+  static buildMenuIntensityWith(char){
+    const inten = [1,2,3,4,5]
+    return inten.map(i => {
+      var tit = 'normal'
+      if ( i > 1 ) { tit = ''.padStart((i - 1)*2,char) }
+      return DCreate('OPTION',{value:i, inner:tit})}
+    )
   }
 
   /** ---------------------------------------------------------------------
@@ -91,25 +90,7 @@ class TagEditor {
     this.obj || this.build()
     this.obj.classList.remove('noDisplay')
     this.setFormValues()
-    if ( options ) {
-      if ( options.top ) {
-        this.obj.style.top = `${options.top}px`
-      }
-      if ( options.left) {
-        this.obj.style.left = `${options.left}px`
-      }
-    }
-    // Rectifier si l'éditeur se trouve trop bas
-    if ( this.obj.offsetTop > UI.maxTop ) {
-      this.obj.style.top = 'auto'
-      this.obj.style.bottom = `${UI.maxTop}px`
-    }
-    // Rectifier si l'éditeur se trouve trop haut
-    if (this.obj.offsetTop < 10)  {
-      this.obj.style.top = '10px'
-      this.obj.style.bottom = 'auto'
-    }
-    // On focus toujours dans le champ
+    // On focus toujours dans le champ du texte du commentaire
     this.contentField.focus()
     this.contentField.select()
   }
@@ -193,7 +174,7 @@ class TagEditor {
         id: this.domId
       , class: 'tag-editor noDisplay'
       , inner: [
-            DCreate('DIV', {class:'title', inner: `Édition tag #${this.tag.id}`})
+            DCreate('DIV', {class:'title', inner: `Commentaire #${this.tag.id.value}`})
           , DCreate('DIV', {class:'content', inner: [
                 DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
               , DCreate('TEXTAREA', {class:'comment', name:'comment', inner:"Commentaire par défaut"})
@@ -213,7 +194,8 @@ class TagEditor {
             ]})
         ]
     })
-    document.body.appendChild(div)
+    this.tag.obj.appendChild(div)
+    // document.body.appendChild(div)
     this.observe()
   }
 

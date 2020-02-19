@@ -27,6 +27,42 @@ class Tag {
   }
 
   /**
+    Pour faire tourner la fonction +method+ sur tous les tags
+    +method+ ::
+        Si [Function] On passe en premier argument le tag [Tag]
+        Si [String] C'est une méthode d'instance qu'on invoque.
+  **/
+  static forEachTag(method)
+  {
+    if ( method instanceof Function ) {
+      this.items.forEach(tag => method(tag))
+    } else if ('string' == typeof method ) /* => méthode de tag */ {
+      this.items.forEach(tag => tag[method].call(tag))
+    } else {
+      console.error("La méthode devrait être un string (méthode de tag) ou une fonction", method)
+    }
+  }
+
+  /**
+    Faire tourner la méthode +method+ [Function] avec toutes les données
+    des types en arguments respectifs.
+  **/
+  static forEachType(method)
+  {
+    Object.values(DATA_TAG_TYPES).forEach(dtype => method.call(null, dtype))
+  }
+
+  /**
+    Pour afficher/masquer les tags du type +tagType+ [String]
+    +tagType+:: [String] L'identifiant du type (clé dans DATA_TAG_TYPES)
+  **/
+  static toggleType(tagType, showIt){
+    this.forEachTag(tag => {
+      tag.type.value == tagType && tag[showIt?'show':'hide'].call(tag)
+    })
+  }
+
+  /**
     Chargement de tous les tags
   **/
   static load(tags){
@@ -51,10 +87,11 @@ class Tag {
             script: 'save-tags'
           , args:{tags: JSON.stringify(this.items.map(tag => tag.toJson))}
         }
-      , success: this.onSuccess.bind(this)
+      , success: this.onSaved.bind(this)
     })
   }
-  static onSuccess(ret){
+  // Au retour de l'enregistrement
+  static onSaved(ret){
     if ( ret.error ) {
       console.error("Une erreur est survenue : ", ret.error.message)
       console.error(ret.error.backtrace.join("\n"))
@@ -81,8 +118,9 @@ class Tag {
     })
     data.type || (data.type = 'com')
     data.content || (data.content = "Un commentaire sur le PDF")
+    delete data.left // pas besoin
     const tag = new Tag(data)
-    tag.build()
+    tag.build({})
     // On met le tag en édition pour pouvoir le sauver ensuite
     tag.edit({top:data.top, left:data.left})
     return tag
@@ -112,6 +150,7 @@ class Tag {
     *
   *** --------------------------------------------------------------------- */
   constructor(data){
+    // log(data)
     for(var k in data) this[k].value = data[k] ;
     this.set(data, /* prop trait plat */ true, /* save = */ false)
     this.constructor.addItem(this)
@@ -123,6 +162,9 @@ class Tag {
   edit(options){
     TagEditor.edit(this, options)
   }
+
+  show(){ this.obj.classList.remove('noDisplay')}
+  hide(){ this.obj.classList.add('noDisplay')}
 
   /**
     Pour définir ou redéfinir les données

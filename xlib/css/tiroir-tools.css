@@ -4,6 +4,7 @@ section#tiroir-tools {
   height:2000px;
   width:400px;
   background-color:white;
+  font-family:Geneva,Arial,Helvetica;
   /* padding-left:50px; /* pour la poignée */ */
   z-index:500;
 }
@@ -18,7 +19,7 @@ section#tiroir-tools.closed {
   transition:1s;
 }
 
-
+/* POIGNÉE */
 section#tiroir-tools .main-handler {
   position:absolute;
   width:40px;
@@ -26,8 +27,22 @@ section#tiroir-tools .main-handler {
   background-color:rgb(148, 153, 144);
 }
 
+/* TOUS LES CONTAINERS */
+section#tiroir-tools > div.container {
+  margin:10px 10px 10px 50px /* pour la poignée */;
+  border:1px solid #CCCCCC;
+  border-radius:0.5em;
+  padding:1em;
+}
+section#tiroir-tools > div.container div.titre {
+  font-size:1.4em;
+  font-style:italic;
+  margin-bottom:1em;
+  color:#999;
+}
+
+
 section#tiroir-tools div.types-support {
-  padding-left:50px; /* pour la poignée */
 }
 section#tiroir-tools div.types-support select {
   /* width: 200px; */
@@ -35,4 +50,14 @@ section#tiroir-tools div.types-support select {
 section#tiroir-tools div.types-support span.label {
   display:inline-block;
   width: 84px;
+}
+
+section#tiroir-tools div#types-showed {
+  -webkit-user-select:none;
+}
+section#tiroir-tools div#types-showed div.span-cb-type-showed {
+
+}
+section#tiroir-tools div#types-showed div.span-cb-type-showed label {
+  margin-left:0.3em;
 }

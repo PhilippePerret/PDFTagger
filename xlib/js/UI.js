@@ -62,9 +62,6 @@ class UI {
     this.maskPDF.addEventListener('mousedown',    PDFMask.onMouseDown.bind(PDFMask))
     this.maskPDF.addEventListener('mouseup',      PDFMask.onMouseUp.bind(PDFMask))
     this.maskPDF.addEventListener('mousemove',    PDFMask.onMouseMove.bind(PDFMask))
-    // Le tiroir amovible
-    // Pour le moment, en cliquant dessus, on l'ouvre/ferme
-    this.tiroirTools.addEventListener('click', TiroirTools.toggle.bind(TiroirTools))
   }
 
   static get maxTop(){

@@ -42,7 +42,8 @@
 }
 
 .tag.dro /* Commentaire sur drôle */ {
-  background-color:pink;
+  background-color:#CCFFCC;
+  background-image: '😄';
 }
 
 .tag.sty /* Commentaire problème de style */ {

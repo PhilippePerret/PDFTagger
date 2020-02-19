@@ -35,7 +35,19 @@ class TiroirTools {
         , DCreate('SPAN', {inner:menuTypes})
       ]}))
     })
+
+    // La section contenant les CB pour afficher/masquer chaque type
+    Tag.forEachType(dtype => {
+      const cbId = `cb-type-showed-${dtype.id}`
+      const cb = DCreate('DIV', {class:'span-cb-type-showed', inner:[
+          DCreate('INPUT', {type:'CHECKBOX', id:cbId, checked:true})
+        , DCreate('LABEL', {for:cbId, inner:dtype.hname})
+      ]})
+      this.divTypesShowed.appendChild(cb)
+    })
+
     this.setup()
+    this.observe()
     this.built = true
   }
 
@@ -43,11 +55,41 @@ class TiroirTools {
     Régler les valeurs
   **/
   static setup(){
-    Object.values(DATA_TAG_TYPES).forEach(dtype => {
+    Tag.forEachType(dtype => {
       DGet(`#typesmenu-${dtype.shortcut}-click`, this.obj).value = dtype.id
     })
   }
 
+  static onCheckTypeShowed(typeId, cbmain, ev){
+    let checkState = !!cbmain.checked
+    console.log("Coché ?", checkState)
+    console.log("Vous avez coché ou décoché le type", typeId)
+    if (ev.metaKey || ev.shiftKey) {
+      // <= La touche meta est pressée
+      const othersState = ev.shiftKey ? checkState : !checkState
+      Tag.forEachType(dtype=>{
+        const cb = DGet(`input#${`cb-type-showed-${dtype.id}`}`,this.obj)
+        cb.checked = othersState
+        Tag.toggleType(dtype.id, othersState)
+      })
+      // On remet le cb initial
+      cbmain.checked = checkState
+    }
+    // Le cb cliqué
+    Tag.toggleType(typeId, cbmain.checked)
+  }
+
+  static observe(){
+    // EN cliquant sur la poignée, on ouvre/ferme le tiroir des outils
+    this.handler.addEventListener('click', this.toggle.bind(this))
+    // EN cochant/décochant les cb des types de commentaires, on les
+    // affiche où on les masque
+    Tag.forEachType(dtype=>{
+      const cb = DGet(`input#${`cb-type-showed-${dtype.id}`}`,this.obj)
+      cb.addEventListener('click', this.onCheckTypeShowed.bind(this, dtype.id, cb))
+    })
+
+  }
   /**
     Retourne un menu pour les types de commentaires
     Il faut définir __ID__ pour qu'il soit unique
@@ -73,5 +115,16 @@ class TiroirTools {
     }
   }
 
+  // Section qui contient les cb pour afficher/masquer les commentaires des
+  // types voulus
+  static get divTypesShowed(){
+    return this._idtypesshowed || (this._idtypesshowed = DGet('#types-showed',this.obj))
+  }
+
+  // Poignée
+  static get handler(){
+    return this._handler || (this._handler = DGet('.main-handler', this.obj))
+  }
+  // Tiroir DOM
   static get obj(){return UI.tiroirTools}
 }
