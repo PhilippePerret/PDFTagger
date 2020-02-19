@@ -14,13 +14,15 @@ class UI {
 
     const WHeight = window.innerHeight
     const footerHeight = $('section#footer').height()
-    const Ajout = 4 + 100 // pour bien voir la fin
+    const Ajout = 4 //+ 100 // pour bien voir la fin
     // log("innerHeight", window.innerHeight)
     // log("footerHeight", footerHeight)
     this._maxtop = WHeight - footerHeight - Ajout ;
     const HContainer = `${this.maxTop}px`
     $('section#pdf-document').css('height', HContainer)
     $('div#container').css('height', HContainer)
+    $(TiroirTools.obj).css('height', HContainer)
+    $(TiroirTools.handler).css('height', HContainer)
 
     const pdfw = this.pdfTag.offsetWidth - 20
     // log("Largeur pdfTag = ", pdfw)

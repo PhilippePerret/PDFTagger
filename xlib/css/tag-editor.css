@@ -30,11 +30,17 @@
 }
 .tag-editor div.content {
   min-height: 100px;
-  padding:1em;
+  padding:0 1em;
+}
+
+.tag-editor div.row {
+  margin: 0.6em 0;
+  padding: 0.6em 0 0 0;
+  /* border-top: 1px solid #CCC; */
 }
 .tag-editor div.buttons {
   padding: 1em;
-  margin-top:0;
+  margin-top:1em;
   text-align:right;
 }
 .tag-editor div.buttons button.btn-cancel {
@@ -55,10 +61,4 @@
 
 .tag-editor select.intensity {
   all:unset;
-}
-
-.tag-editor div.row {
-  margin: 0.6em 0;
-  padding: 0.6em 0 0 0;
-  border-top: 1px solid #CCC;
 }

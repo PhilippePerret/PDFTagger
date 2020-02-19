@@ -2,6 +2,8 @@ section#tiroir-tools {
   position:fixed;
   top:0;
   height:2000px;
+  overflow-y:auto;
+  overflow-x:hidden;
   width:400px;
   background-color:white;
   font-family:Geneva,Arial,Helvetica;

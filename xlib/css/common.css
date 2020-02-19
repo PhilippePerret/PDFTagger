@@ -6,3 +6,8 @@
   font-size: 9pt;
   font-style:italic;
 }
+
+.fleft {float:left;}
+.fright {float:right;}
+.left {text-align:left;}
+.right{text-align:right;}

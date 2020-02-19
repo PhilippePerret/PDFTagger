@@ -45,6 +45,19 @@ class TiroirTools {
       ]})
       this.divTypesShowed.appendChild(cb)
     })
+    this.divTypesShowed.appendChild(DCreate('HR'))
+    // On ajoute aussi CB pour les commentaires corrigés et un pour les
+    // commentaires non corrigés
+    let tabfixed = [['fixed', "corrigés"], ['not-fixed', "non corrigés"]]
+    tabfixed.forEach(paire => {
+      const [suf, txt] = paire
+      let cbId = `cb-type-showed-${suf}`
+      let cb = DCreate('DIV', {class: 'span-cb-type-showed', inner:[
+          DCreate('INPUT', {type:'CHECKBOX', id:cbId, checked:true})
+        , DCreate('LABEL', {for:cbId, inner: `Commentaires ${txt}`})
+      ]})
+      this.divTypesShowed.appendChild(cb)
+    })
 
     this.setup()
     this.observe()
@@ -62,8 +75,6 @@ class TiroirTools {
 
   static onCheckTypeShowed(typeId, cbmain, ev){
     let checkState = !!cbmain.checked
-    console.log("Coché ?", checkState)
-    console.log("Vous avez coché ou décoché le type", typeId)
     if (ev.metaKey || ev.shiftKey) {
       // <= La touche meta est pressée
       const othersState = ev.shiftKey ? checkState : !checkState
@@ -88,7 +99,12 @@ class TiroirTools {
       const cb = DGet(`input#${`cb-type-showed-${dtype.id}`}`,this.obj)
       cb.addEventListener('click', this.onCheckTypeShowed.bind(this, dtype.id, cb))
     })
-
+    // EN cochant/décochant les cb des commentaires corrigés ou non corrigés,
+    // on doit les afficher/masquer
+    let cb = DGet('#cb-type-showed-fixed',this.obj)
+    cb.addEventListener('click', this.onCheckTypeShowed.bind(this,'fixed',cb))
+    cb = DGet('#cb-type-showed-not-fixed',this.obj)
+    cb.addEventListener('click', this.onCheckTypeShowed.bind(this,'not-fixed',cb))
   }
   /**
     Retourne un menu pour les types de commentaires

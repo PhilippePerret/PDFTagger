@@ -58,7 +58,13 @@ class Tag {
   **/
   static toggleType(tagType, showIt){
     this.forEachTag(tag => {
-      tag.type.value == tagType && tag[showIt?'show':'hide'].call(tag)
+      let ok ;
+      if ( tagType.match('fixed') ) {
+        ok = tag.fixed.value == (tagType == 'fixed')
+      } else {
+        ok = tag.type.value == tagType
+      }
+      ok && tag[showIt?'show':'hide'].call(tag)
     })
   }
 

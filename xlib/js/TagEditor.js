@@ -61,7 +61,7 @@ class TagEditor {
   static buildMenuIntensityWith(char){
     const inten = [1,2,3,4,5]
     return inten.map(i => {
-      var tit = 'normal'
+      var tit = 'normale'
       if ( i > 1 ) { tit = ''.padStart((i - 1)*2,char) }
       return DCreate('OPTION',{value:i, inner:tit})}
     )
@@ -176,14 +176,15 @@ class TagEditor {
       , inner: [
             DCreate('DIV', {class:'title', inner: `Commentaire #${this.tag.id.value}`})
           , DCreate('DIV', {class:'content', inner: [
-                DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
+                DCreate('DIV', {class:'row', inner:[
+                  DCreate('SELECT', {class:'type', name:'type', inner:this.constructor.OptionsTypes})
+                ]})
               , DCreate('TEXTAREA', {class:'comment', name:'comment', inner:"Commentaire par défaut"})
-              , DCreate('DIV', {class:'explication', inner: `<code>${isMac?'⌘↩︎':'⌃↩︎'}</code> = “OK”`})
               , DCreate('DIV', {class:'row', inner:[
                     DCreate('LABEL', {inner: "Intensité : "})
                   , DCreate('SELECT', {class:'intensity', inner:this.constructor[`OptionsIntensity${this.isPositive?'Pos':'Neg'}`]})
                 ]})
-              , DCreate('DIV', {class:'row', inner:[
+              , DCreate('DIV', {class:'row', class:'right cb-fixed-div', inner:[
                     DCreate('INPUT', {type:'CHECKBOX', id:this.fixedCbId, class:'fixed', name:'fixed'})
                   , DCreate('LABEL', {inner:'corrigé', for:this.fixedCbId})
                 ]})
@@ -222,6 +223,22 @@ class TagEditor {
     DGet('.btn-cancel', this.obj).addEventListener('click', this.onCancel)
     this.contentField.addEventListener('keypress', this.onKeyPress.bind(this))
     this.typeField.addEventListener('change', this.onChangeType.bind(this))
+    // Il faut désactiver tout click sur la fiche elle-même (pour ne pas
+    // déclencher des éditions de fiche en dessous)
+    this.obj.addEventListener('click', ev => stopEvent(ev))
+    // Mais il faut remettre la sensibilité sur le cb
+    // this.fixedCb.addEventListener('click', this.onClickFixedCb.bind(this))
+    DGet('div.cb-fixed-div',this.obj).addEventListener('click', this.onClickFixedCb.bind(this))
+
+
+  }
+
+  /**
+    Pour compenser le fait qu'on tue tous les évènements click
+  **/
+  onClickFixedCb(){
+    console.log("this.fixedCb.checked = ", this.fixedCb.checked)
+    this.fixedCb.checked = !this.fixedCb.checked
   }
 
   onChangeType(ev){
@@ -257,6 +274,9 @@ class TagEditor {
     return DATA_TAG_TYPES[value].positive === true
   }
 
+  get fixedCb(){
+    return this._fixedcb || (this._fixedcb = DGet(`#${this.fixedCbId}`, this.obj))
+  }
   get intensityField(){
     return this._intensityfield || (this._intensityfield = DGet('select.intensity', this.obj))
   }
