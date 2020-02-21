@@ -20,7 +20,7 @@ class Tag {
         , {id:'content'   , type:'string',  required:true}
         , {id:'intensity' , type:'number',  required:true}
         , {id:'top'       , type:'number',  required:true}
-        , {id:'heigth'    , type:'number',  required:true}
+        , {id:'height'    , type:'number',  required:true}
         , {id:'fixed'     , type:'boolean', required:true}
         , {id:'date'      , type:'number',  required:true}
       ]
@@ -89,10 +89,11 @@ class Tag {
     Sauvegarde tous les tags
   **/
   static save(){
+    console.log('-> Tag::save')
     Ajax.send({
       data:{
             script: 'save-tags'
-          , args:{tags: JSON.stringify(this.toJson)}
+          , args:{tags: JSON.stringify(this.toJson())}
         }
       , success: this.onSaved.bind(this)
     })
@@ -125,6 +126,7 @@ class Tag {
     Ajoute un nouveau tag
   **/
   static addNewItem(data) {
+    console.log('-> Tag::addNewItem')
     Object.assign(data, {
         id: this.nextId()
       , date: Number(new Date())
@@ -149,6 +151,7 @@ class Tag {
     C'est celle-ci qui doit être utilisée en priorité
   **/
   static removeItem(tag){
+    console.log('-> Tag::remove')
     tag.remove()
     const indexItem = this.indexOf(tag)
     this.items.splice(indexItem,1)
@@ -207,9 +210,9 @@ class Tag {
   }
 
   edit(options){
-    log('-> edit')
+    log('-> Tag#edit')
     TagEditor.edit(this, options)
-    log('<- edit')
+    log('<- Tag#edit')
   }
 
   show(){ this.obj.classList.remove('noDisplay')}
@@ -221,6 +224,7 @@ class Tag {
     (utiliser la méthode de classe)
   **/
   remove(){
+    console.log('-> Tag#remove')
     this.unobserve()
     this.obj.remove()
   }
@@ -229,6 +233,7 @@ class Tag {
     Pour définir ou redéfinir les données
   **/
   set(data, propTraitPlat = false, saveIfChanged = false){
+    console.log('-> Tag#set')
     let tagHasChanged = false ;
     for(var k in data){
       let tprop = this[k]
@@ -256,7 +261,13 @@ class Tag {
   get toJson(){
     var h = {}
     this.constructor.SAVED_PROPERTIES.forEach( dprop => {
-      Object.assign(h, {[dprop.id]: this[dprop.id].value})
+      let value = this[dprop.id] ;
+      if ( value instanceof TagProperty ) {
+        value = value.value
+      } else {
+        console.log("La propriété '%s' n'est pas une TagProperty", dprop.id)
+      }
+      Object.assign(h, {[dprop.id]: value})
     })
     return h
   }
@@ -270,6 +281,7 @@ class Tag {
   **/
   onMouseDown(ev){
     this.mousedownTime = ev.timeStamp
+    this.setMovable()
     ev.stopPropagation()
   }
   onMouseUp(ev){
@@ -281,14 +293,34 @@ class Tag {
     })
     if ( ev.timeStamp < this.mousedownTime + 500) {
       // C'est un vrai click, pas un déplacement
+      this.unsetMovable()
       this.edit()
     } else {
+      this.unsetMovable()
       return stopEvent(ev)
     }
   }
   onMouseMove(ev){
 
   }
+  onEndMoving(ev, ui){
+    log('-> onEndMoving')
+    stopEvent(ev)
+    this.top.value = ui.position.top + 10
+    this.constructor.save()
+    log('<- onEndMoving')
+    return false
+  }
+
+  // Pour rendre le tag déplaçable
+  setMovable(){
+    $(this.obj).draggable('enable')
+  }
+  // Pour fixer le tag (non déplaçable)
+  unsetMovable(){
+    $(this.obj).draggable('disable')
+  }
+
   /*
       DOM methods
   */
@@ -314,16 +346,21 @@ class Tag {
     this.intensity.domUpdate()
   }
 
+  /**
+    Définir la classe du tag
+    Cette classe définit son aspect et dépend de son type
+  **/
   setClass(){
-    this.obj.className = `tag ${this.type.value}`
-  }
-
-  onMove(ev, ui){
-    log('-> onMove')
-    this.top.value = ui.position.top
-    stopEvent(ev)
-    log('<- onMove')
-    return false
+    try {
+      this.obj.className = `tag ${this.type.value}`
+    } catch (err) {
+      var errors = []
+      if ( !this.obj ) { errors.push('this.obj est non défini')}
+      if ( !this.type) { errors.push('this.type est non défini')}
+      else if ( !(this.type instanceof TagProperty) ) {errors.push('this.type devrait être une TagProperty')}
+      console.error("Une erreur est survenue dans Tag#setClass :", err)
+      console.error(errors.join("\n"))
+    }
   }
 
   observe(){
@@ -331,8 +368,9 @@ class Tag {
     this.obj.addEventListener('mouseup', this.onMouseUp)
     const dragData = {
         axis:'y'
-      , stop: this.onMove.bind(this)
+      , stop: this.onEndMoving.bind(this)
       , stack:'.tag' // pour être toujours au-dessus des autres
+      , disabled: true
     }
     // console.log("Drag data : ", dragData)
     $(this.obj).draggable(dragData)
