@@ -6,6 +6,15 @@
 *** --------------------------------------------------------------------- */
 function log(msg, params){console.log(msg, params)}
 
+window.onkeypress = function(ev){
+  if (ev.key === 'Escape') {
+    log('-> escape')
+    window.onmousemove  = null ;
+    window.onmouseup    = null ;
+    log('-> désactivation des mousemove et mouseup de window')
+  }
+}
+
 class UI {
   static setInterface()
   {
@@ -30,7 +39,8 @@ class UI {
     this.maskScrollbar.style.width = `20px`
     this.maskScrollbar.style.height = HContainer
 
-    this.maskPDF.style.width = `${pdfw}px`
+
+    this.pdfMask.obj.style.width = `${pdfw}px`
 
     // On construit le tiroir d'outils
     TiroirTools.build()
@@ -62,27 +72,15 @@ class UI {
      * On utilise mousedown et mouseup pour deux raisons :
      *  a) pouvoir suspendre la propagation quand clique ou drag sur tag
      *  b) prendre la valeur de départ et la valeur d'arrivée pour "trait"
-     */
-    this.bandeSensible.addEventListener('mousedown',  PdfDocument.onMouseDown.bind(PdfDocument))
-    this.bandeSensible.addEventListener('mouseup',    PdfDocument.onMouseUp.bind(PdfDocument))
-    this.bandeSensible.addEventListener('mousemove',  PdfDocument.onMouseMove.bind(PdfDocument))
-    this.pdfTag.addEventListener('mousedown',  PdfDocument.onMouseDown.bind(PdfDocument))
-    this.pdfTag.addEventListener('mouseup',    PdfDocument.onMouseUp.bind(PdfDocument))
-    this.pdfTag.addEventListener('mousemove',  PdfDocument.onMouseMove.bind(PdfDocument))
-    
-    this.maskPDF.addEventListener('click',        PDFMask.onClick.bind(PDFMask))
-    this.maskPDF.addEventListener('mousedown',    PDFMask.onMouseDown.bind(PDFMask))
-    this.maskPDF.addEventListener('mouseup',      PDFMask.onMouseUp.bind(PDFMask))
-    this.maskPDF.addEventListener('mousemove',    PDFMask.onMouseMove.bind(PDFMask))
+    **/
+    this.bandeSensible.observe()
+    this.pdfMask.observe()
   }
 
   static get maxTop(){
     return this._maxtop || (this._maxtop = 300)
   }
 
-  static get maskPDF(){
-    return this._maskpdf || (this._maskpdf = DGet('#mask-pdf'))
-  }
   static get maskScrollbar(){
     return this._maskscrollbar || (this._maskscrollbar = DGet('#mask-scrollbar'))
   }
@@ -91,7 +89,10 @@ class UI {
     return this._tiroirtools || (this._tiroirtools = DGet('#tiroir-tools'))
   }
   static get bandeSensible(){
-    return this._bandesensible || (this._bandesensible = DGet('#bande-sensible'))
+    return this._bandesensible || (this._bandesensible = new BandeSensible())
+  }
+  static get pdfMask(){
+    return this._pdfmask || (this._pdfmask = new PDFMask())
   }
 
   static get pdfTag(){

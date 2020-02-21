@@ -32,14 +32,6 @@ Surf.prototype.update = function(){
   }
   message(`x=${this.x} y=${this.y} w=${this.w} h=${this.h} r=${this.r} b=${this.b}`);
 };
-Surf.prototype.observe = function(){
-  if(this.onMouseMove){
-    this.jqObj.on('mousemove',this.onMouseMove);
-  };
-  if(this.onMouseUp){
-    this.jqObj.on('mouseup', this.onMouseUp)
-  }
-};
 Surf.prototype.inspect = function(){
   return {
     left: this.x,

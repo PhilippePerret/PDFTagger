@@ -6,29 +6,15 @@
   *   scroller)
   *
 *** --------------------------------------------------------------------- */
-class PDFMask {
+class PDFMask extends SensibleSection {
 
-  static onClick(ev){
-    const top = ev.offsetY + UI.secDocument.scrollTop
-    log("Je clique sur le masque à ", top)
-    PdfDocument.addTagAt({top:top, left:ev.clientX /* pour placer l'éditeur */})
-    return stopEvent(ev)
+  constructor(){
+    super()
   }
 
-  static onMouseDown(ev){
-
-    return stopEvent(ev)
-  }
-
-  static onMouseMove(ev){
-
-    return stopEvent(ev)
-  }
-
-  static onMouseUp(ev){
-
-    return stopEvent(ev)
-  }
-
-
+  // Pour obtenir la valeur réelle du top du tag à mettre, il faut
+  // ajouter cette valeur
+  get topAjout() { return PdfDocument.scrollTop }
+  
+  get domId(){return '#mask-pdf'}
 }

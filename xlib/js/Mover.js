@@ -41,19 +41,6 @@ const Mover = {
       this.subject = null ;
     }
   , init: function(){
-      Mover.onMouseDown = Mover.onMouseDown.bind(Mover);
-      Mover.onMouseUp   = Mover.onMouseUp.bind(Mover);
-      Mover.onMouseMove = Mover.onMouseMove.bind(Mover);
-      Mover.start       = Mover.start.bind(Mover);
-      Mover.stop        = Mover.stop.bind(Mover);
-      Mover.startSelection  = Mover.startSelection.bind(Mover);
-      Mover.stopSelection   = Mover.stopSelection.bind(Mover);
-      $('#tags')
-        .on('mousedown',  $.proxy(Mover,'onMouseDown'))
-        .on('mouseup',    $.proxy(Mover,'onMouseUp'))
-        .on('mousemove',  $.proxy(Mover,'onMouseMove'));
-      // console.log('Mover initialisé.');
-    }
 
     /**
      * Méthode qui est seulement atteinte lorsque l'on clique sur la table
@@ -62,6 +49,7 @@ const Mover = {
      *
      * Cette méthode démarre le processus de sélection par rectangle.
      */
+    }
   , onMouseDown: function(ev){
       // console.log('click sur la table d’analyse en dehors de tout tag');
       if(Options.get('rectangle-selection')){
@@ -120,10 +108,6 @@ const Mover = {
       if(!this.jqObjSelection){
         Page.table_analyse.append('<div id="rectangle-selection" class="rectangle-selection"></div>');
         this.jqObjSelection = $('div#rectangle-selection');
-        // Le rectangle de sélection doit lui aussi répondre aux mousemove et up
-        this.jqObjSelection
-          .on('mousemove', $.proxy(Mover,'onMouseMove'))
-          .on('mouseup', $.proxy(Mover,'onMouseUp'));
       }
       var x = ev.pageX - Page.RECTIF_X;
       var y = ev.pageY - Page.RECTIF_Y

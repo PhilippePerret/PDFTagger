@@ -7,12 +7,14 @@
   *
 *** --------------------------------------------------------------------- */
 const DATA_TAG_TYPES = {
+  // Note : la class 'pos' sera ajoutée si le tag est positif,
+  // 'neg' dans le cas contraire (par défaut)
     'ort': {id:'ort', hname: 'Faute d’orthographe'  , shortcut:'f'}
   , 'cri': {id:'cri', hname: 'Commentaire critique' , shortcut:'d'}
   , 'unc': {id:'unc', hname: 'Passage peu clair'    , shortcut:'q'}
   , 'sty': {id:'sty', hname: 'Problème de style'    , shortcut:'s'}
   , 'com': {id:'com', hname: 'Simple commentaire'   , shortcut:'w'}
-  , 'pos': {id:'pos', hname: 'Commentaire positif', positive:true, shortcut:'x'}
+  , 'cpo': {id:'cpo', hname: 'Commentaire positif', positive:true, shortcut:'x'}
   , 'dro': {id:'dro', hname: 'Drôle, marrant', positive:true, shortcut:'v'}
 }
 class TagEditor {

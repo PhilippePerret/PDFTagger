@@ -155,7 +155,7 @@ class Tag {
     tag.remove()
     const indexItem = this.indexOf(tag)
     this.items.splice(indexItem,1)
-    this.table.remove(tag.id)
+    this.table.delete(tag.id)
     this.reset()
     this.save()
   }
@@ -205,7 +205,6 @@ class Tag {
 
     this.onMouseDown  = this.onMouseDown.bind(this)
     this.onMouseUp    = this.onMouseUp.bind(this)
-    this.onMouseMove  = this.onMouseMove.bind(this)
 
   }
 
@@ -253,6 +252,7 @@ class Tag {
   domUpdate(){
     this.peuple()
     this.setClass()
+    this.updateHeight()
   }
 
   /**
@@ -280,18 +280,31 @@ class Tag {
 
   **/
   onMouseDown(ev){
-    this.mousedownTime = ev.timeStamp
+    log('-> onMouseDown')
+    this.mousedownTime = Number(ev.timeStamp)
     this.setMovable()
-    ev.stopPropagation()
+    stopEvent(ev)
   }
   onMouseUp(ev){
-    ev.stopPropagation()
-    console.log({
-        'temps mousedown': this.mousedownTime
-      , 'temps mouseup':ev.timeStamp
-      , 'is click': (ev.timeStamp < this.mousedownTime + 1)
-    })
-    if ( ev.timeStamp < this.mousedownTime + 500) {
+    log('-> onMouseUp')
+    let mTimeDown ;
+    if ( ! this.mousedownTime ) {
+      // Cela arrive par exemple quand on clique sur une poignée du tag
+      // Il faut alors ne rien faire ici et ne surtout pas interrompre
+      // l'évènement
+      log("this.mousedownTime n'est pas défini, je retourne true")
+      return true
+    } else {
+      log(`this.mousedownTime est défini et vaut ${this.mousedownTime}`)
+      mTimeDown = Number(this.mousedownTime)
+      delete this.mousedownTime
+    }
+    // console.log({
+    //     'temps mousedown': mTimeDown
+    //   , 'temps mouseup':ev.timeStamp
+    //   , 'is click': (ev.timeStamp < mTimeDown + 1)
+    // })
+    if ( ev.timeStamp < mTimeDown + 500) {
       // C'est un vrai click, pas un déplacement
       this.unsetMovable()
       this.edit()
@@ -300,9 +313,7 @@ class Tag {
       return stopEvent(ev)
     }
   }
-  onMouseMove(ev){
 
-  }
   onEndMoving(ev, ui){
     log('-> onEndMoving')
     stopEvent(ev)
@@ -314,10 +325,12 @@ class Tag {
 
   // Pour rendre le tag déplaçable
   setMovable(){
+    this.obj.addEventListener('mouseup', this.onMouseUp)
     $(this.obj).draggable('enable')
   }
   // Pour fixer le tag (non déplaçable)
   unsetMovable(){
+    this.obj.removeEventListener('mouseup', this.onMouseUp)
     $(this.obj).draggable('disable')
   }
 
@@ -327,16 +340,19 @@ class Tag {
 
   build(){
     const div = DCreate('DIV', {
-        class:`tag ${this.type.value}`
-      , style:`top:${this.top.value - 10}px;`
+        id: `tag-${this.id.value}`
+      , class: this.cssClass
+      , style:`top:${this.top.value - 10}px;height:${this.height.value||20}px;`
       , inner: [
-            DCreate('SPAN', {class:'intensity'})
+            DCreate('SPAN', {class:'mark-stylo'})
+          , DCreate('SPAN', {class:'intensity'})
           , DCreate('SPAN', {class:`fixed`})
           , DCreate('SPAN', {class:'content'})
+          , DCreate('SPAN', {class:'height-handler'})
         ]})
     this._obj = div
-    UI.bandeSensible.appendChild(div)
-    this.peuple()
+    UI.bandeSensible.append(div)
+    this.domUpdate()
     this.observe()
   }
 
@@ -351,8 +367,12 @@ class Tag {
     Cette classe définit son aspect et dépend de son type
   **/
   setClass(){
+    this.obj.className = this.cssClass
+  }
+
+  get cssClass(){
     try {
-      this.obj.className = `tag ${this.type.value}`
+      return `tag ${this.type.value} ${this.isPositive?'pos':'neg'}`
     } catch (err) {
       var errors = []
       if ( !this.obj ) { errors.push('this.obj est non défini')}
@@ -365,7 +385,6 @@ class Tag {
 
   observe(){
     this.obj.addEventListener('mousedown', this.onMouseDown)
-    this.obj.addEventListener('mouseup', this.onMouseUp)
     const dragData = {
         axis:'y'
       , stop: this.onEndMoving.bind(this)
@@ -374,11 +393,53 @@ class Tag {
     }
     // console.log("Drag data : ", dragData)
     $(this.obj).draggable(dragData)
+
+    this.heightHandler.addEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
+
   }
   unobserve(){
     this.obj.removeEventListener('mousedown', this.onMouseDown)
-    this.obj.removeEventListener('mouseup', this.onMouseUp)
     $(this.obj).draggable('destroy')
+    this.heightHandler.removeEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
+  }
+
+  onHeightHandlerMouseDown(ev){
+    log("-> onHeightHandlerMouseDown")
+    // window.addEventListener('mouseup', this.onHeightHandlerMouseUp.bind(this))
+    window.onmouseup = this.onHeightHandlerMouseUp.bind(this)
+    // window.addEventListener('mousemove', this.onHeightHandlerMouseMove.bind(this))
+    window.onmousemove = this.onHeightHandlerMouseMove.bind(this)
+    stopEvent(ev)
+    this.offsetYonStart = ev.clientY
+    this.heightOnStart = this.height.value || this.obj.offsetHeight
+    log("<- onHeightHandlerMouseDown")
+    return false
+  }
+  onHeightHandlerMouseUp(ev){
+    log("-> onHeightHandlerMouseUp")
+    const diff = ev.clientY - this.offsetYonStart
+    this.height.value = this.heightOnStart + diff
+    this.updateHeight()
+    window.onmouseup = null ;
+    window.onmousemove = null ;
+    log("<- onHeightHandlerMouseUp")
+    return stopEvent(ev)
+  }
+  onHeightHandlerMouseMove(ev){
+    log("-> onHeightHandlerMouseMove")
+    stopEvent(ev)
+    // console.log("ev:", ev)
+    const diff = ev.clientY - this.offsetYonStart
+    // console.log("Je déplace de ", diff)
+    // console.log("Nouvelle hauteur : ", this.heightOnStart + diff)
+    this.updateHeight(this.heightOnStart + diff)
+  }
+
+  // Régler la hauteur du tag
+  updateHeight(newHeight){
+    newHeight = `${newHeight||this.height.value}px`
+    this.obj.style.height = newHeight
+    this.markStylo.style.height = newHeight
   }
 
   /*
@@ -399,6 +460,14 @@ class Tag {
       DOM properties
   */
 
+  // Mark "de stylo" près du document
+  get markStylo(){
+    return this._markstylo || (this._markstylo = DGet('.mark-stylo', this.obj))
+  }
+  // Poignée pour régler la hauteur
+  get heightHandler(){
+    return this._heighthandler || (this._heighthandler = DGet('.height-handler', this.obj))
+  }
   get obj(){ return this._obj }
 }
 

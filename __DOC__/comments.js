@@ -1,1 +1,1 @@
-const TAGS = [{"id":1,"type":"unc","content":"Ce passage n'est pas clair","top":201},{"id":2,"type":"com","content":"Juste un petit commentaire","top":600}];
+const TAGS = [{"id":3,"type":"com","content":"Nouveau commentaire","top":485,"height":176,"date":1582278496155},{"id":4,"type":"com","content":"Nouveau commentaire","top":144,"height":156,"date":1582278604388},{"id":5,"type":"com","content":"Ce paragraphe est rigolo.","intensity":0,"top":342,"height":92,"fixed":false,"date":1582278619631}];

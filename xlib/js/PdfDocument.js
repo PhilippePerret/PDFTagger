@@ -5,9 +5,19 @@ class PdfDocumentClass {
   }
 
   onMouseDown(ev){
+    this.mouseDownOK = true
     this.mousedownY = ev.offsetY
   }
   onMouseUp(ev){
+
+    if ( ! this.mouseDownOK ) {
+      // Cela survient lorsque le click down de souris n'a pas été commencé
+      // sur la bande sensible => Il ne faut rien faire
+      return stopEvent(ev)
+    } else {
+      delete this.mouseDownOK
+    }
+
     log({
       offsetX: ev.offsetX,
       offsetY: ev.offsetY,
@@ -17,15 +27,21 @@ class PdfDocumentClass {
 
     let height = Math.abs(ev.offsetY - this.mousedownY)
     if ( height < 20 ) height = 20 ;
-    this.addTagAt({top: ev.offsetY, height:height})
+    this.addTagAt({top: this.mousedownY, height:height})
     return stopEvent(ev)
-  }
-  onMouseMove(ev){
-    // TODO Plus tard pour voir le trait en même temps qu'on le fait
   }
 
   addTagAt(params) {
     Tag.addNewItem(params)
   }
+
+  // Pour définir ou récupérer le scroll
+  /*
+    @syntax PdfDocument.scrollTop
+  */
+  get scrollTop(){return this.obj.scrollTop}
+  set scrollTop(v){this.obj.scrollTop = v}
+
+  get obj(){return UI.secDocument}
 }
 const PdfDocument = new PdfDocumentClass()

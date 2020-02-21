@@ -2,8 +2,33 @@
   position:absolute;
   padding:5px 2px 5px 1px;
   width:calc(100% - 3px);
+  cursor:move;
 }
 
+.tag span.mark-stylo {
+  position:absolute;
+  display:inline-block;
+  margin-left: -30px;
+  width:4px;
+  height:20px;
+}
+.tag.pos span.mark-stylo {
+  background-color:blue;
+}
+.tag.neg span.mark-stylo {
+  background-color:red;
+}
+
+/* La poignée pour augmenter la hauteur du tag */
+.tag span.height-handler {
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:6px;
+  background-color:rgba(198, 198, 198, 0.4);
+  cursor:ns-resize;
+}
 
 .tag span.fixed {
   margin-right: 8px;
