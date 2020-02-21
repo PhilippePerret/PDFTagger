@@ -117,8 +117,32 @@ class TagEditor {
   }
 
   onCancel(ev){
-    this.hide()
+    if ( this.tag.isNew ) {
+      this.removeTag()  // Si c'est un nouveau tag, il faut le détruire
+    } else {
+      this.hide()
+    }
     return stopEvent(ev)
+  }
+
+  /**
+    Appelée par le bouton pour détruire le tag
+  **/
+  onDestroy(ev){
+    ev && stopEvent(ev)
+    this.removeTag()
+    return false
+  }
+
+  /**
+    @private
+    Procédure de destruction de l'éditeur du tag
+    un tag
+  **/
+  removeTag(){
+    this.unobserve()
+    this.obj.remove()
+    Tag.removeItem(this.tag)
   }
 
   /*
@@ -191,6 +215,7 @@ class TagEditor {
             ]})
           , DCreate('DIV', {class:'buttons', inner: [
                 DCreate('BUTTON', {type:'button', class:'btn-cancel', inner:'Renoncer'})
+              , DCreate('BUTTON', {type:'button', class:'btn-destroy', inner:'Détruire'})
               , DCreate('BUTTON', {type:'button', class:'btn-ok', inner:'OK'})
             ]})
         ]
@@ -218,19 +243,34 @@ class TagEditor {
       Event methods
   */
 
+  static get observers(){
+    return [
+        ['.btn-ok', 'click', 'onOK']
+      , ['.btn-cancel', 'click', 'onCancel']
+      , ['.btn-destroy', 'click', 'onDestroy']
+      , ['textarea.comment', 'keypress', 'onKeyPress']
+      , ['select.type', 'change', 'onChangeType']
+      , ['div.cb-fixed-div', 'click', 'onClickFixedCb']
+    ]
+  }
   observe(){
-    DGet('.btn-ok', this.obj).addEventListener('click', this.onOK)
-    DGet('.btn-cancel', this.obj).addEventListener('click', this.onCancel)
-    this.contentField.addEventListener('keypress', this.onKeyPress.bind(this))
-    this.typeField.addEventListener('change', this.onChangeType.bind(this))
+    this.toggleObserve(true)
+  }
+
+  unobserve(){
+    this.toggleObserve(false)
+  }
+
+  toggleObserve(observe = true){
+    const methListener = observe ? 'addEventListener' : 'removeEventListener'
     // Il faut désactiver tout click sur la fiche elle-même (pour ne pas
     // déclencher des éditions de fiche en dessous)
-    this.obj.addEventListener('click', ev => stopEvent(ev))
-    // Mais il faut remettre la sensibilité sur le cb
-    // this.fixedCb.addEventListener('click', this.onClickFixedCb.bind(this))
-    DGet('div.cb-fixed-div',this.obj).addEventListener('click', this.onClickFixedCb.bind(this))
+    this.obj[methListener]('click', ev => stopEvent(ev))
 
-
+    this.constructor.observers.forEach(observer => {
+      const [selector, event, method] = observer
+      DGet(selector, this.obj)[methListener](event, this[method].bind(this))
+    })
   }
 
   /**

@@ -25,7 +25,6 @@
   background-color:inherit!important;
   color:inherit!important;
   padding:4px 0.4em;
-  margin-bottom:1em;
   -webkit-user-select:none;
 }
 .tag-editor div.content {
@@ -34,7 +33,7 @@
 }
 
 .tag-editor div.row {
-  margin: 0.6em 0;
+  margin: 0 0 0.6em 0;
   padding: 0.6em 0 0 0;
   /* border-top: 1px solid #CCC; */
 }
@@ -42,10 +41,22 @@
   padding: 1em;
   margin-top:1em;
   text-align:right;
+  opacity:0.3
 }
-.tag-editor div.buttons button.btn-cancel {
+.tag-editor div.buttons:hover {
+  opacity:1;
+}
+
+.tag-editor div.buttons button.btn-cancel,
+.tag-editor div.buttons button.btn-destroy
+{
   float:left;
   vertical-align:middle;
+}
+.tag-editor div.buttons button.btn-destroy {
+  background-color:red;
+  border:red;
+  color:white;
 }
 
 .tag-editor select.type {

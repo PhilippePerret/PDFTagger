@@ -92,9 +92,15 @@ class Tag {
     Ajax.send({
       data:{
             script: 'save-tags'
-          , args:{tags: JSON.stringify(this.items.map(tag => tag.toJson))}
+          , args:{tags: JSON.stringify(this.toJson)}
         }
       , success: this.onSaved.bind(this)
+    })
+  }
+  static toJson(){
+    return this.items.map(tag => {
+      tag.isNew = false
+      return tag.toJson
     })
   }
   // Au retour de l'enregistrement
@@ -127,10 +133,42 @@ class Tag {
     data.content || (data.content = "Nouveau commentaire")
     delete data.left // pas besoin
     const tag = new Tag(data)
+    tag.isNew = true
     tag.build({})
     // On met le tag en édition pour pouvoir le sauver ensuite
     tag.edit({top:data.top, left:data.left})
     return tag
+  }
+
+  static reset(){
+    delete this.tag2index
+  }
+
+  /**
+    Fonction complète de destruction du tag
+    C'est celle-ci qui doit être utilisée en priorité
+  **/
+  static removeItem(tag){
+    tag.remove()
+    const indexItem = this.indexOf(tag)
+    this.items.splice(indexItem,1)
+    this.table.remove(tag.id)
+    this.reset()
+    this.save()
+  }
+
+  /**
+    +return+:: [Integer] Index du tag +tag+ dans les items
+  **/
+  static indexOf(tag){
+    if ( undefined === this.tag2index) {
+      this.tag2index = {}
+      var index ;
+      this.items.forEach(tag => {
+        Object.assign(this.tag2index, {[tag.id]: index++})
+      })
+    }
+    return this.tag2index[tag.id]
   }
 
   /**
@@ -176,6 +214,16 @@ class Tag {
 
   show(){ this.obj.classList.remove('noDisplay')}
   hide(){ this.obj.classList.add('noDisplay')}
+
+  /**
+    @private
+    Méthode de destruction du tag
+    (utiliser la méthode de classe)
+  **/
+  remove(){
+    this.unobserve()
+    this.obj.remove()
+  }
 
   /**
     Pour définir ou redéfinir les données
@@ -231,7 +279,7 @@ class Tag {
       , 'temps mouseup':ev.timeStamp
       , 'is click': (ev.timeStamp < this.mousedownTime + 1)
     })
-    if ( ev.timeStamp < this.mousedownTime + 1500) {
+    if ( ev.timeStamp < this.mousedownTime + 500) {
       // C'est un vrai click, pas un déplacement
       this.edit()
     } else {
@@ -288,6 +336,11 @@ class Tag {
     }
     // console.log("Drag data : ", dragData)
     $(this.obj).draggable(dragData)
+  }
+  unobserve(){
+    this.obj.removeEventListener('mousedown', this.onMouseDown)
+    this.obj.removeEventListener('mouseup', this.onMouseUp)
+    $(this.obj).draggable('destroy')
   }
 
   /*

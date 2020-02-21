@@ -30,6 +30,7 @@ div#bande-sensible {
   width: 300px;
   height: 10000px;
   float:right;
+  -webkit-user-select:none;
 }
 
 div#mask-scrollbar {
