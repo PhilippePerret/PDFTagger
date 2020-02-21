@@ -267,8 +267,10 @@ class DRetractable {
     Observation
   **/
   observe(){
-    this.pictoOpen.addEventListener('click', this.toggleState)
-    this.spanTitle.addEventListener('click', this.toggleState)
+    // this.pictoOpen.addEventListener('click', this.toggleState)
+    this.pictoOpen.onclick = this.toggleState
+    // this.spanTitle.addEventListener('click', this.toggleState)
+    this.spanTitle.onclick = this.toggleState
   }
 
   /*

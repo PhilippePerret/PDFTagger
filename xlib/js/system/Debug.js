@@ -12,6 +12,10 @@
   *   alias: D.dfn
   *
   */
+
+function showBacktrace(){
+  Debug.showBacktrace()
+}
 const Debug = {
     class: 'Debug'
     // Les niveaux
@@ -22,6 +26,14 @@ const Debug = {
     // ou inférieur sera affiché. C'est donc comme un "max-level"
   , level: 0
 
+  , showBacktrace:function(){
+      try {
+        throw new Error('Juste pour voir le backtrace')
+      } catch (err) {
+        console.log(err)
+        console.log(err.stack)
+      }
+  }
 
   , debug: function(msg, niveau){
       if(undefined==niveau){niveau=Debug.DBG_STANDARD_LEVEL}

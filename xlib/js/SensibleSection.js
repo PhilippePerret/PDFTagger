@@ -12,15 +12,24 @@
 class SensibleSection {
 
   observe(){
-    this.obj.addEventListener('mousedown', this.onMouseDown.bind(this))
+    // this.obj.addEventListener('mousedown', this.onMouseDown.bind(this))
+    this.obj.onmousedown = this.onMouseDown.bind(this)
+  }
+  unobserve(){
+    console.log("-> unobserve de '%s'", this.domId)
+    // this.obj.removeEventListener('mousedown', this.onMouseDown.bind(this))
+    this.obj.onmousedown = null
   }
 
   onMouseDown(ev){
+    log(`-> onMouseDown on ${this.domId}`)
     this.mouseDownOK = true
     this.mousedownY = Number(ev.offsetY)
     this.clientYStart = Number(ev.clientY)
-    this.obj.addEventListener('mouseup', this.onMouseUp.bind(this))
-    this.obj.addEventListener('mousemove', this.onMouseMove.bind(this))
+    // this.obj.addEventListener('mouseup', this.onMouseUp.bind(this))
+    // this.obj.addEventListener('mousemove', this.onMouseMove.bind(this))
+    this.obj.onmouseup = this.onMouseUp.bind(this)
+    this.obj.onmousemove = this.onMouseMove.bind(this)
     this.removeRectangleSection()
     this.rectangleSelection = DCreate('DIV', {
         id: 'rectangle-selection'
@@ -39,6 +48,7 @@ class SensibleSection {
   }
 
   onMouseMove(ev){
+    log(`-> onMouseMove on ${this.domId}`)
     if ( this.rectangleSelection ) {
       this.rectangleSelection.style.height = `${ev.clientY - this.clientYStart}px`
     }
@@ -46,6 +56,7 @@ class SensibleSection {
   }
 
   onMouseUp(ev){
+    log(`-> onMouseUp on ${this.domId}`)
     this.removeRectangleSection()
     if ( ! this.mouseDownOK ) {
       return true

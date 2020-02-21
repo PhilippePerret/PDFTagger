@@ -127,6 +127,7 @@ class Tag {
   **/
   static addNewItem(data) {
     console.log('-> Tag::addNewItem')
+    showBacktrace()
     Object.assign(data, {
         id: this.nextId()
       , date: Number(new Date())
@@ -280,13 +281,13 @@ class Tag {
 
   **/
   onMouseDown(ev){
-    log('-> onMouseDown')
+    log('-> onMouseDown on Tag#%i', this.id.value)
     this.mousedownTime = Number(ev.timeStamp)
     this.setMovable()
     stopEvent(ev)
   }
   onMouseUp(ev){
-    log('-> onMouseUp')
+    log('-> onMouseUp on Tag#%i', this.id.value)
     let mTimeDown ;
     if ( ! this.mousedownTime ) {
       // Cela arrive par exemple quand on clique sur une poignée du tag
@@ -325,12 +326,14 @@ class Tag {
 
   // Pour rendre le tag déplaçable
   setMovable(){
-    this.obj.addEventListener('mouseup', this.onMouseUp)
+    // this.obj.addEventListener('mouseup', this.onMouseUp)
+    this.obj.onmouseup = this.onMouseUp
     $(this.obj).draggable('enable')
   }
   // Pour fixer le tag (non déplaçable)
   unsetMovable(){
-    this.obj.removeEventListener('mouseup', this.onMouseUp)
+    // this.obj.removeEventListener('mouseup', this.onMouseUp)
+    this.obj.onmouseup = null
     $(this.obj).draggable('disable')
   }
 
@@ -384,7 +387,8 @@ class Tag {
   }
 
   observe(){
-    this.obj.addEventListener('mousedown', this.onMouseDown)
+    // this.obj.addEventListener('mousedown', this.onMouseDown)
+    this.obj.onmousedown = this.onMouseDown
     const dragData = {
         axis:'y'
       , stop: this.onEndMoving.bind(this)
@@ -394,13 +398,16 @@ class Tag {
     // console.log("Drag data : ", dragData)
     $(this.obj).draggable(dragData)
 
-    this.heightHandler.addEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
+    // this.heightHandler.addEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
+    this.heightHandler.onmousedown = this.onHeightHandlerMouseDown.bind(this)
 
   }
   unobserve(){
-    this.obj.removeEventListener('mousedown', this.onMouseDown)
+    // this.obj.removeEventListener('mousedown', this.onMouseDown)
+    this.obj.onmousedown = null
     $(this.obj).draggable('destroy')
-    this.heightHandler.removeEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
+    // this.heightHandler.removeEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
+    this.heightHandler.onmousedown = null
   }
 
   onHeightHandlerMouseDown(ev){

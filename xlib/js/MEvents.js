@@ -14,6 +14,7 @@
  */
 
  function stopEvent(ev){
+   ev.cancelBubble = true
    ev.stopPropagation()
    ev.preventDefault()
    return false

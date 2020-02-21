@@ -4,7 +4,13 @@
   Classe UI
   *
 *** --------------------------------------------------------------------- */
-function log(msg, params){console.log(msg, params)}
+function log(msg, params){
+  if (params){
+    console.log(msg, params)
+  } else {
+    console.log(msg)
+  }
+}
 
 window.onkeypress = function(ev){
   if (ev.key === 'Escape') {
@@ -46,7 +52,50 @@ class UI {
     TiroirTools.build()
 
     this.observe()
+
+    // Pour essayer les bubbling/capturing
+    // this.tryEvents()
+
   } // setInterface
+
+  static tryEvents(){
+    // this.bandeSensible.obj.remove()
+    // this.pdfMask.obj.remove()
+    // this.pdfTag.remove()
+    this.container.remove()
+
+    document.body.appendChild(
+      DCreate('DIV', {
+          id: 'parent'
+        , style:'width:300px;height:100px;background:green;'
+        , inner:[
+              DCreate('DIV', {id:'enfant1', style:'width:100px;height:50px;background:blue', inner:'Enfant 1'})
+            , DCreate('DIV', {id:'enfant2', style:'width:100px;height:50px;background:red', inner:'Enfant 2'})
+          ]
+      })
+    );
+    const parent = DGet('#parent')
+    const child1 = DGet('#enfant1')
+    const child2 = DGet('#enfant2')
+
+    parent.addEventListener('click', this.onClickParent.bind(this))
+    child1.addEventListener('click', this.onClickChild1.bind(this), true)
+    child2.addEventListener('click', this.onClickChild2.bind(this), false)
+  }
+
+  static onClickParent(ev){
+    log("ev in parent = ", ev)
+    log("-> Parent 1")
+  }
+  static onClickChild1(ev){
+    // ev.cancelBubble = true
+    stopEvent(ev)
+    log("-> Child 1")
+  }
+  static onClickChild2(ev){
+    // ev.cancelBubble = false
+    log("-> Child 2")
+  }
 
   /**
     Insert la balise pour charger les tags de commentaires

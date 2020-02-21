@@ -4,11 +4,20 @@ class PdfDocumentClass {
 
   }
 
+  observe(){
+
+  }
+  unobserve(){
+
+  }
+
   onMouseDown(ev){
+    log('-> onMouseDown on PdfDocument')
     this.mouseDownOK = true
     this.mousedownY = ev.offsetY
   }
   onMouseUp(ev){
+    log('-> onMouseUp on PdfDocument')
 
     if ( ! this.mouseDownOK ) {
       // Cela survient lorsque le click down de souris n'a pas été commencé

@@ -89,6 +89,10 @@ class TagEditor {
         de la fenêtre
   **/
   show(options){
+    // On met en veille les observateurs du tag
+    this.tag.unobserve()
+    UI.bandeSensible.unobserve()
+    PdfDocument.unobserve()
     this.obj || this.build()
     this.obj.classList.remove('noDisplay')
     this.setFormValues()
@@ -98,6 +102,10 @@ class TagEditor {
   }
 
   hide(){
+    // On remet les observateurs du tag
+    this.tag.observe()
+    UI.bandeSensible.observe()
+    PdfDocument.observe()
     this.obj.classList.add('noDisplay')
   }
 
@@ -223,7 +231,6 @@ class TagEditor {
         ]
     })
     this.tag.obj.appendChild(div)
-    // document.body.appendChild(div)
     this.observe()
   }
 
@@ -264,14 +271,15 @@ class TagEditor {
   }
 
   toggleObserve(observe = true){
-    const methListener = observe ? 'addEventListener' : 'removeEventListener'
+    // const methListener = observe ? 'addEventListener' : 'removeEventListener'
     // Il faut désactiver tout click sur la fiche elle-même (pour ne pas
     // déclencher des éditions de fiche en dessous)
-    this.obj[methListener]('click', ev => stopEvent(ev))
+    // this.obj[methListener]('mouseup', ev => stopEvent(ev))
 
     this.constructor.observers.forEach(observer => {
       const [selector, event, method] = observer
-      DGet(selector, this.obj)[methListener](event, this[method].bind(this))
+      // DGet(selector, this.obj)[methListener](event, this[method].bind(this), false /*bubbling*/)
+      DGet(selector, this.obj)[`on${event}`] = observe ?this[method].bind(this) : null
     })
   }
 
