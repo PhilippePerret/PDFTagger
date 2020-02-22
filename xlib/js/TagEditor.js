@@ -99,10 +99,14 @@ class TagEditor {
     // On focus toujours dans le champ du texte du commentaire
     this.contentField.focus()
     this.contentField.select()
+    $('.tag').css('z-index', 0)
+    this.tag.obj.classList.add('edited')
   }
 
   hide(){
     // On remet les observateurs du tag
+    $('.tag').css('z-index', 1)
+    this.tag.obj.classList.remove('edited')
     this.tag.observe()
     UI.bandeSensible.observe()
     PdfDocument.observe()

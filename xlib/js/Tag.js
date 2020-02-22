@@ -478,7 +478,13 @@ class Tag {
   get heightHandler(){
     return this._heighthandler || (this._heighthandler = DGet('.height-handler', this.obj))
   }
+
+  // DOM élément
   get obj(){ return this._obj }
+
+  // jQuery objet
+  get jqObj(){return $(this.tag.obj)}
+
 }
 
 /** ---------------------------------------------------------------------
@@ -532,4 +538,5 @@ class TagProperty {
   }
   // Raccourci vers l'objet DOM du tag
   get obj(){ return this.tag.obj }
-}
+
+} // TagProperty

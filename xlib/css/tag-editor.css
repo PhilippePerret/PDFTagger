@@ -14,7 +14,9 @@
   border-radius: 1em;
   width: 300px;
   font-family: Arial, Helvetica;
-  z-index: 500;
+}
+.tag-editor, .tag-editor * {
+  z-index: 500 !important;
 }
 
 .tag-editor, .tag-editor * {
