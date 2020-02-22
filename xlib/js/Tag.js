@@ -209,6 +209,12 @@ class Tag {
 
   }
 
+  // Pour écrire un message en console avec une référence à l'élément
+  log(msg,args){
+    log(`[${this.ref}] ${msg}`, args)
+  }
+  get ref(){return this._ref||(this._ref = `Tag#${this.id.value}`)}
+
   edit(options){
     log('-> Tag#edit')
     TagEditor.edit(this, options)
@@ -224,7 +230,7 @@ class Tag {
     (utiliser la méthode de classe)
   **/
   remove(){
-    console.log('-> Tag#remove')
+    this.log('-> remove')
     this.unobserve()
     this.obj.remove()
   }
@@ -233,7 +239,7 @@ class Tag {
     Pour définir ou redéfinir les données
   **/
   set(data, propTraitPlat = false, saveIfChanged = false){
-    console.log('-> Tag#set')
+    this.log('-> set')
     let tagHasChanged = false ;
     for(var k in data){
       let tprop = this[k]
@@ -251,6 +257,7 @@ class Tag {
   }
 
   domUpdate(){
+    log('-> Tag#domUpdate')
     this.peuple()
     this.setClass()
     this.updateHeight()
@@ -372,12 +379,15 @@ class Tag {
     Cette classe définit son aspect et dépend de son type
   **/
   setClass(){
+    this.log(`-> setClass ('${this.cssClass}')`)
+    log("this.type.value = ", this.type.value)
+    log("this.isPositive = ", this.isPositive)
     this.obj.className = this.cssClass
   }
 
   get cssClass(){
     try {
-      return `tag ${this.type.value} ${this.isPositive?'pos':'neg'}`
+      return `tag ${this.type.value} ${this.positivityClass}`
     } catch (err) {
       var errors = []
       if ( !this.obj ) { errors.push('this.obj est non défini')}
@@ -467,6 +477,26 @@ class Tag {
   get date(){return this._date || (this._date = new TagProperty(this, 'date'))}
 
   /*
+      State methods
+  */
+
+  /**
+    +return+ true si c'est un commentaire positif, false dans le cas contraire
+    C'est en fonction du type qu'on le détermine
+  **/
+  get isPositive(){
+    return (DATA_TAG_TYPES[this.type.value].positivity === 1)
+  }
+  get positivity(){return DATA_TAG_TYPES[this.type.value].positivity}
+  get positivityClass(){
+    switch(this.positivity){
+      case 1 :  return 'pos' ;
+      case -1 : return 'neg' ;
+      case 0  : return 'neu' ;
+    }
+  }
+
+  /*
       DOM properties
   */
 
@@ -525,13 +555,6 @@ class TagProperty {
     }
   }
 
-  /**
-    +return+ true si c'est un commentaire positif, false dans le cas contraire
-    C'est en fonction du type qu'on le détermine
-  **/
-  get isPositive(){
-    return DATA_TAG_TYPES[this.tag.type.value].positive === true
-  }
 
   get span(){
     return this._span || (this._span = DGet(`.${this.property}`, this.obj))

@@ -9,13 +9,13 @@
 const DATA_TAG_TYPES = {
   // Note : la class 'pos' sera ajoutée si le tag est positif,
   // 'neg' dans le cas contraire (par défaut)
-    'ort': {id:'ort', hname: 'Faute d’orthographe'  , shortcut:'f'}
-  , 'cri': {id:'cri', hname: 'Commentaire critique' , shortcut:'d'}
-  , 'unc': {id:'unc', hname: 'Passage peu clair'    , shortcut:'q'}
-  , 'sty': {id:'sty', hname: 'Problème de style'    , shortcut:'s'}
-  , 'com': {id:'com', hname: 'Simple commentaire'   , shortcut:'w'}
-  , 'cpo': {id:'cpo', hname: 'Commentaire positif', positive:true, shortcut:'x'}
-  , 'dro': {id:'dro', hname: 'Drôle, marrant', positive:true, shortcut:'v'}
+    'ort': {id:'ort', hname: 'Faute d’orthographe'  , shortcut:'f', positivity: -1}
+  , 'cri': {id:'cri', hname: 'Commentaire critique' , shortcut:'d', positivity: -1}
+  , 'unc': {id:'unc', hname: 'Passage peu clair'    , shortcut:'q', positivity: -1}
+  , 'sty': {id:'sty', hname: 'Problème de style'    , shortcut:'s', positivity: -1}
+  , 'com': {id:'com', hname: 'Simple commentaire'   , shortcut:'w', positivity: 0}
+  , 'cpo': {id:'cpo', hname: 'Commentaire positif'  , shortcut:'x', positivity: 1}
+  , 'dro': {id:'dro', hname: 'Drôle, marrant'       , shortcut:'v', positivity: 1}
 }
 class TagEditor {
 

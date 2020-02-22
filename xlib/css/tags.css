@@ -24,10 +24,13 @@
   height:20px;
 }
 .tag.pos span.mark-stylo {
-  background-color:blue;
+  background-color:rgb(106, 223, 153);
 }
 .tag.neg span.mark-stylo {
   background-color:red;
+}
+.tag.neu span.mark-stylo {
+  background-color:#CCC;
 }
 
 /* La poignée pour augmenter la hauteur du tag */
