@@ -320,6 +320,8 @@ class Tag {
     stopEvent(ev)
     this.top.value = ui.position.top + 10
     this.constructor.save()
+    // console.log("ui = ", ui)
+    ui.helper[0].classList.remove('moving')
     log('<- onEndMoving')
     return false
   }
@@ -394,6 +396,7 @@ class Tag {
       , stop: this.onEndMoving.bind(this)
       , stack:'.tag' // pour être toujours au-dessus des autres
       , disabled: true
+      , classes: {'ui-draggable-dragging': 'moving'}
     }
     // console.log("Drag data : ", dragData)
     $(this.obj).draggable(dragData)
