@@ -5,3 +5,5 @@ DOC_FOLDER_PATH = File.join(APPFOLDER,'__DOC__')
 TAGS_PATH = File.join(DOC_FOLDER_PATH, 'comments.json')
 TAGS_BACKUPS_FOLDER = File.join(DOC_FOLDER_PATH, 'xbackups')
 `mkdir -p "#{TAGS_BACKUPS_FOLDER}"`
+
+PREFS_PATH = File.join(DOC_FOLDER_PATH, 'prefs.json')

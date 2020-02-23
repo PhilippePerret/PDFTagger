@@ -51,7 +51,13 @@ section#tiroir-tools div.types-support select {
 }
 section#tiroir-tools div.types-support span.label {
   display:inline-block;
-  width: 84px;
+  width: 170px;
+}
+section#tiroir-tools div.types-support input.letter {
+  font-family: Arial,Helvetica,Geneva;
+  font-size:13.1pt;
+  text-align:center;
+  width: 20px;
 }
 
 section#tiroir-tools div#types-showed {

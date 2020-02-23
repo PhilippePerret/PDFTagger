@@ -11,3 +11,11 @@
 .fright {float:right;}
 .left {text-align:left;}
 .right{text-align:right;}
+
+div.row.buttons {
+  text-align:right;
+  margin-top:0.5em;
+}
+div.row.buttons button.mini {
+  font-size:10pt;
+}

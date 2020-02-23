@@ -7,7 +7,10 @@ $(document).ready(function(){
 
   if('undefined'==typeof(TESTING)){TESTING = false};
 
-  UI.setInterface()
+  TiroirTools.loadPrefs()
+  .then(UI.setInterface.bind(UI))
+  .catch(error)
+
 
   Tag.load()
 

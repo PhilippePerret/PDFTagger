@@ -26,15 +26,17 @@ class TiroirTools {
   **/
   static build(){
     const container = DGet('.types-support', this.obj)
-    var letters = ['q','s','d','f','g', 'w','x','c','v','b']
-    const typesLines = letters.forEach(letter => {
-      var menuTypes = String(this.tempMenuTypes).replace(/__ID__/g,`${letter}-click`)
+    Tag.forEachType(dtype => {
+      const inputId = `shortcut-type-${dtype.id}`
       container.appendChild( DCreate('DIV', {class:'line-type', inner:[
-          DCreate('SPAN', {class:'label', inner:`${letter.toUpperCase()} + click `})
-        , DCreate('SPAN', {inner:'= '})
-        , DCreate('SPAN', {inner:menuTypes})
+          DCreate('SPAN', {class:'label', inner:`${dtype.hname}`})
+        , DCreate('SPAN', {inner:'= click + '})
+        , DCreate('INPUT', {type:'TEXT', id:inputId , value:dtype.shortcut,class:'letter'})
       ]}))
     })
+    container.appendChild(DCreate('DIV', {class:'row buttons', inner:[
+      DCreate('BUTTON',{type:'BUTTON', inner:'Enregistrer', class:'btn-save-shortcuts mini'})
+    ]}))
 
     // La section contenant les CB pour afficher/masquer chaque type
     Tag.forEachType(dtype => {
@@ -59,19 +61,81 @@ class TiroirTools {
       this.divTypesShowed.appendChild(cb)
     })
 
-    this.setup()
     this.observe()
     this.built = true
   }
 
   /**
-    Régler les valeurs
+    Reçoit la définition des shortcuts et les dispatche dans la
+    donnée principale DATA_TAG_TYPES.
+
+    Note : au moment où cette méthode est appelée, les champs ne sont pas
+    encore définis dans le tiroir d'outils. Il faut donc se contenter de
+    dispatcher les valeurs dans DATA_TAG_TYPES.
   **/
-  static setup(){
+  static dispatchCommentsShortcuts(table) {
     Tag.forEachType(dtype => {
-      DGet(`#typesmenu-${dtype.shortcut}-click`, this.obj).value = dtype.id
+      DATA_TAG_TYPES[dtype.id].shortcut = table[dtype.id]
     })
   }
+
+  /**
+    Appelée par le bouton "Enregistrer" de la section des shortcuts
+    Pour enregistrer ces shortcuts
+  **/
+  static onClickSaveShorcuts() {
+    let hshortcuts = {}
+    // On relève les valeurs
+    Tag.forEachType(dtype => {
+      const inputId = `shortcut-type-${dtype.id}`
+      const value = DGet(`input#${inputId}`,this.obj).value
+      Object.assign(hshortcuts, {[dtype.id]: value})
+    })
+    // On s'assure qu'il n'y ait pas de doublons
+    // On enregistre par ajax les shortcuts
+    this.saveShortcuts(hshortcuts)
+  }
+
+  static saveShortcuts(table){
+    Ajax.send({
+        data:{script:'save-prefs', args:{shortcuts:table}}
+      , success: this.onSavedShortcuts.bind(this)
+    })
+  }
+  static onSavedShortcuts(ret){
+    if (ret.error){
+      console.error(ret.error)
+    } else {
+      console.log("- Préférences enregistrées avec succès -")
+    }
+  }
+
+  /**
+    Chargement des préférences au lancement de l'application
+  **/
+  static loadPrefs(){
+    return new Promise((ok,ko) => {
+      Ajax.send({
+          data:{script:'get-prefs'}
+        , success: this.onLoadedePrefs.bind(this, ok, ko)
+      })
+    })
+  }
+  static onLoadedePrefs(ok, ko, ret){
+    console.log('-> onLoadedePrefs', ok, ko, ret)
+    if (ret.error) {
+      ko(ret.error)
+    } else {
+      if ( ret.prefs.shortcuts ) {
+        // <= Des raccourcis sont définis
+        // => On les mets dans la donnée et dans les champs
+        this.dispatchCommentsShortcuts(ret.prefs.shortcuts)
+      }
+      ok() // C'est tout bon
+    }
+  }
+
+
 
   static onCheckTypeShowed(typeId, cbmain, ev){
     let checkState = !!cbmain.checked
@@ -93,6 +157,10 @@ class TiroirTools {
   static observe(){
     // EN cliquant sur la poignée, on ouvre/ferme le tiroir des outils
     this.handler.addEventListener('click', this.toggle.bind(this))
+
+    // En cliquant sur le bouton 'enregistrer' de la section des shortcuts,
+    // on les enregistre
+    DGet('.btn-save-shortcuts',this.obj).onclick = this.onClickSaveShorcuts.bind(this)
     // EN cochant/décochant les cb des types de commentaires, on les
     // affiche où on les masque
     Tag.forEachType(dtype=>{
