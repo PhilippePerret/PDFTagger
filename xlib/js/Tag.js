@@ -168,7 +168,6 @@ class Tag {
     this.items.splice(indexItem,1)
     this.table.delete(tag.id)
     this.reset()
-    this.save()
   }
 
   /**
@@ -256,7 +255,7 @@ class Tag {
     Ajax.send({
       data:{
           script: 'destroy-tag'
-        , args:{tagId:this.id}
+        , args:{tagId:this.id.value}
       }
       , success: this.onSaved.bind(this)
     })
