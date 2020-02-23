@@ -1,1 +1,1 @@
-const TAGS = [{"id":1,"type":"com","content":"Nouveau commentaire","intensity":0,"top":148,"height":43,"fixed":false,"date":1582426380101},{"id":2,"type":"com","content":"Nouveau commentaire","top":471,"height":45,"date":1582426382462},{"id":3,"type":"com","content":"Nouveau commentaire","top":563,"height":29,"date":1582426388975},{"id":4,"type":"com","content":"Nouveau commentaire","intensity":0,"top":245,"height":83,"fixed":false,"date":1582426489964}];
+const TAGS = [];

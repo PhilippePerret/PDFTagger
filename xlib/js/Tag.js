@@ -432,7 +432,7 @@ class Tag {
   unobserve(){
     // this.obj.removeEventListener('mousedown', this.onMouseDown)
     this.obj.onmousedown = null
-    $(this.obj).draggable('destroy')
+    this.jqObj.draggable('option','disabled') || this.jqObj.draggable('destroy')
     // this.heightHandler.removeEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
     this.heightHandler.onmousedown = null
   }
@@ -527,7 +527,7 @@ class Tag {
   get obj(){ return this._obj }
 
   // jQuery objet
-  get jqObj(){return $(this.tag.obj)}
+  get jqObj(){return $(this.obj)}
 
 }
 
