@@ -21,13 +21,13 @@ function stopEvent(ev){
 }
 
 window.onkeydown = function onKeyDown(ev){
-  const diff = Number(ev.timeStamp - (window.lastKeyDownTime||0))
   window.lastKeyDownTime = Number(ev.timeStamp)
-  if (diff < 120){
-    return stopEvent(ev)
+  if ( window.pressedLetter == ev.key ){
+    const diff = Number(ev.timeStamp - (window.lastKeyDownTime||0))
+    if ( diff < 120 ) return stopEvent(ev)
   } else {
   }
-  window.pressedLetter = ev.key
+  window.pressedLetter = String(ev.key)
   // log(`KEY DOWN : '${ev.key}' (diff: ${diff})`)
 }
 window.onkeyup = function onKeyUp(ev){

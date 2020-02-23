@@ -25,8 +25,6 @@ class UI {
   static setInterface()
   {
 
-    this.setBaliseForComments()
-
     const WHeight = window.innerHeight
     const footerHeight = $('section#footer').height()
     const Ajout = 4 //+ 100 // pour bien voir la fin
@@ -95,24 +93,6 @@ class UI {
   static onClickChild2(ev){
     // ev.cancelBubble = false
     log("-> Child 2")
-  }
-
-  /**
-    Insert la balise pour charger les tags de commentaires
-    On la met ici plutôt que dans le code en dur pour pouvoir
-    gérer le cas où le fichier n'existe pas.
-  **/
-  static setBaliseForComments(){
-    const script = DCreate('SCRIPT', {src: '__DOC__/comments.js'})
-    document.body.appendChild(script)
-    script.onerror = function(ev){
-      console.error("Le fichier des commentaires n'existe pas")
-      console.error(ev)
-    }
-    script.onload = function(ev){
-      Tag.load(TAGS)
-      Tag.build()
-    }
   }
 
   static observe()

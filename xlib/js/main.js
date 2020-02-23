@@ -9,4 +9,6 @@ $(document).ready(function(){
 
   UI.setInterface()
 
+  Tag.load()
+
 });

@@ -70,11 +70,26 @@ class Tag {
   }
 
   /**
-    Chargement de tous les tags
+    Chargement des tags du document
   **/
-  static load(tags){
-    // log("Chargement des tags", tags)
-    tags.forEach(dtag => new Tag(dtag))
+  static load(){
+    console.log('-> Tag::load')
+    Ajax.send({
+      data:{
+          script:'get-tags'
+        , args:{}
+      }
+      , success: this.onLoaded.bind(this)
+    })
+  }
+  static onLoaded(ret){
+    if (ret.error){
+      console.error("Impossible de charger les tags…")
+    } else {
+      // console.log("ret", ret)
+      Object.values(ret.tags).forEach(dtag => new Tag(dtag))
+      this.build()
+    }
   }
 
   /**
@@ -87,31 +102,12 @@ class Tag {
 
   /**
     Sauvegarde tous les tags
+
+    Note : ça ne se fait que lorsqu'ils ne sont pas nombreux
+    Sinon, ensuite, on fait du cas par cas.
   **/
   static save(){
-    console.log('-> Tag::save')
-    Ajax.send({
-      data:{
-            script: 'save-tags'
-          , args:{tags: JSON.stringify(this.toJson())}
-        }
-      , success: this.onSaved.bind(this)
-    })
-  }
-  static toJson(){
-    return this.items.map(tag => {
-      tag.isNew = false
-      return tag.toJson
-    })
-  }
-  // Au retour de l'enregistrement
-  static onSaved(ret){
-    if ( ret.error ) {
-      console.error("Une erreur est survenue : ", ret.error.message)
-      console.error(ret.error.backtrace.join("\n"))
-    } else {
-      log("Enregistrement effectué avec succès", ret)
-    }
+    return console.warn("Je ne dois plus enregistrer tous les tags")
   }
 
   static get items(){
@@ -229,6 +225,50 @@ class Tag {
   }
   get ref(){return this._ref||(this._ref = `Tag#${this.id.value}`)}
 
+  /**
+    Pour sauver le tag
+  **/
+  save(){
+    this.log('-> save')
+    Ajax.send({
+      data:{
+          script:'save-tag'
+        , args:{tag:this.toJson}
+      }
+      , success: this.onSaved.bind(this)
+    })
+  }
+  onSaved(ret){
+    if ( ret.error ) {
+      console.error("Une erreur est survenue : ", ret.error)
+      console.log(ret)
+    } else {
+      this.isNew = false
+      log("Enregistrement effectué avec succès", ret)
+    }
+  }
+
+  /**
+    Destruction du tag
+  **/
+  destroy(){
+    this.log('-> destroy')
+    Ajax.send({
+      data:{
+          script: 'destroy-tag'
+        , args:{tagId:this.id}
+      }
+      , success: this.onSaved.bind(this)
+    })
+  }
+  onDestroyed(ret){
+    if ( ret.error ) {
+      console.error("Une erreur est survenue : ", ret.error)
+    } else {
+      log("Destruction effectuée avec succès", ret)
+    }
+  }
+
   edit(options){
     log('-> Tag#edit')
     TagEditor.edit(this, options)
@@ -247,6 +287,7 @@ class Tag {
     this.log('-> remove')
     this.unobserve()
     this.obj.remove()
+    this.isNew || this.destroy()
   }
 
   /**
@@ -266,7 +307,7 @@ class Tag {
     tagHasChanged && this.domUpdate()
     if ( tagHasChanged && saveIfChanged ){
       log("des valeurs ont changées, je dois enregistrer la nouvelle donnée.")
-      this.constructor.save()
+      this.save()
     }
   }
 
@@ -302,22 +343,22 @@ class Tag {
 
   **/
   onMouseDown(ev){
-    log('-> onMouseDown on Tag#%i', this.id.value)
-    this.mousedownTime = Number(ev.timeStamp)
+    this.log('-> onMouseDown')
+    this.mousedownTime  = Number(ev.timeStamp)
+    this.clientYStart   = Number(ev.clientY)
+    this.topStart       = Number(this.obj.offsetTop)
     this.setMovable()
     stopEvent(ev)
   }
   onMouseUp(ev){
-    log('-> onMouseUp on Tag#%i', this.id.value)
+    this.log('-> onMouseUp')
     let mTimeDown ;
     if ( ! this.mousedownTime ) {
       // Cela arrive par exemple quand on clique sur une poignée du tag
       // Il faut alors ne rien faire ici et ne surtout pas interrompre
       // l'évènement
-      log("this.mousedownTime n'est pas défini, je retourne true")
       return true
     } else {
-      log(`this.mousedownTime est défini et vaut ${this.mousedownTime}`)
       mTimeDown = Number(this.mousedownTime)
       delete this.mousedownTime
     }
@@ -332,32 +373,33 @@ class Tag {
       this.edit()
     } else {
       this.unsetMovable()
-      return stopEvent(ev)
+      this.onEndMoving(ev)
     }
   }
 
-  onEndMoving(ev, ui){
-    log('-> onEndMoving')
+  onMouseMove(ev){
     stopEvent(ev)
-    this.top.value = ui.position.top + 10
-    this.constructor.save()
-    // console.log("ui = ", ui)
-    ui.helper[0].classList.remove('moving')
-    log('<- onEndMoving')
-    return false
+    this.obj.style.top = `${this.topStart + (ev.clientY - this.clientYStart) + 10}px`
+  }
+
+  onEndMoving(ev){
+    this.log('-> onEndMoving')
+    this.top.value = this.topStart + (ev.clientY - this.clientYStart) + 10
+    this.save()
+    return stopEvent(ev)
   }
 
   // Pour rendre le tag déplaçable
   setMovable(){
-    // this.obj.addEventListener('mouseup', this.onMouseUp)
+    this.obj.classList.add('moving')
     this.obj.onmouseup = this.onMouseUp
-    $(this.obj).draggable('enable')
+    window.onmousemove = this.onMouseMove.bind(this)
   }
   // Pour fixer le tag (non déplaçable)
   unsetMovable(){
-    // this.obj.removeEventListener('mouseup', this.onMouseUp)
+    this.obj.classList.remove('moving')
     this.obj.onmouseup = null
-    $(this.obj).draggable('disable')
+    window.onmousemove = null
   }
 
   /*
@@ -394,8 +436,6 @@ class Tag {
   **/
   setClass(){
     this.log(`-> setClass ('${this.cssClass}')`)
-    log("this.type.value = ", this.type.value)
-    log("this.isPositive = ", this.isPositive)
     this.obj.className = this.cssClass
   }
 
@@ -413,35 +453,18 @@ class Tag {
   }
 
   observe(){
-    // this.obj.addEventListener('mousedown', this.onMouseDown)
     this.obj.onmousedown = this.onMouseDown
-    const dragData = {
-        axis:'y'
-      , stop: this.onEndMoving.bind(this)
-      , stack:'.tag' // pour être toujours au-dessus des autres
-      , disabled: true
-      , classes: {'ui-draggable-dragging': 'moving'}
-    }
-    // console.log("Drag data : ", dragData)
-    $(this.obj).draggable(dragData)
-
-    // this.heightHandler.addEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
     this.heightHandler.onmousedown = this.onHeightHandlerMouseDown.bind(this)
 
   }
   unobserve(){
-    // this.obj.removeEventListener('mousedown', this.onMouseDown)
     this.obj.onmousedown = null
-    this.jqObj.draggable('option','disabled') || this.jqObj.draggable('destroy')
-    // this.heightHandler.removeEventListener('mousedown', this.onHeightHandlerMouseDown.bind(this))
     this.heightHandler.onmousedown = null
   }
 
   onHeightHandlerMouseDown(ev){
-    log("-> onHeightHandlerMouseDown")
-    // window.addEventListener('mouseup', this.onHeightHandlerMouseUp.bind(this))
+    this.log("-> onHeightHandlerMouseDown")
     window.onmouseup = this.onHeightHandlerMouseUp.bind(this)
-    // window.addEventListener('mousemove', this.onHeightHandlerMouseMove.bind(this))
     window.onmousemove = this.onHeightHandlerMouseMove.bind(this)
     stopEvent(ev)
     this.offsetYonStart = ev.clientY
@@ -450,7 +473,7 @@ class Tag {
     return false
   }
   onHeightHandlerMouseUp(ev){
-    log("-> onHeightHandlerMouseUp")
+    this.log("-> onHeightHandlerMouseUp")
     const diff = ev.clientY - this.offsetYonStart
     this.height.value = this.heightOnStart + diff
     this.updateHeight()
