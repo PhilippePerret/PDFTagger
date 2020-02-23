@@ -6,7 +6,7 @@
 =end
 
 require_relative 'loadTags.rb' # => TAGS
-tagId  = Ajax.arg(:tagId)
+tagId  = Ajax.arg(:tagId).to_s
 Ajax << {tag_to_destroy: "#{tagId}::#{tagId.class}"}
 
 begin
@@ -18,11 +18,11 @@ begin
   init_tags_count = TAGS.keys.count.to_i
   motif = 'raison inconnue' # pour mettre le motif d'échec
 
-  if TAGS[tagId.to_s].nil?
+  if TAGS[tagId].nil?
     motif = 'ce tag est inconnu'
   else
     # On supprime le tag
-    TAGS.delete(tagId.to_s)
+    TAGS.delete(tagId)
   end
 
   # Nombre de tags après la suppression

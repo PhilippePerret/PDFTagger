@@ -191,8 +191,10 @@ class Tag {
     nouvel item (et donc enregistre la nouvelle liste)
   **/
   static addItem(tag){
-    tag.id.value = this.nextId()
-    // log("this.items = ", this.items)
+    if ( undefined === tag.id.value ) {
+      tag.id.value = this.nextId()
+    }
+    console.log("tag id = %i", tag.id.value)
     this.items.push(tag)
     this.table.set(tag.id.value, tag)
   }
@@ -214,6 +216,7 @@ class Tag {
     this.constructor.addItem(this)
 
     this.onMouseDown  = this.onMouseDown.bind(this)
+    this.onMouseMove  = this.onMouseMove.bind(this)
     this.onMouseUp    = this.onMouseUp.bind(this)
 
   }
@@ -392,7 +395,7 @@ class Tag {
   setMovable(){
     this.obj.classList.add('moving')
     this.obj.onmouseup = this.onMouseUp
-    window.onmousemove = this.onMouseMove.bind(this)
+    window.onmousemove = this.onMouseMove
   }
   // Pour fixer le tag (non déplaçable)
   unsetMovable(){
@@ -478,6 +481,7 @@ class Tag {
     this.updateHeight()
     window.onmouseup = null ;
     window.onmousemove = null ;
+    this.save()
     log("<- onHeightHandlerMouseUp")
     return stopEvent(ev)
   }
