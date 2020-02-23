@@ -20,9 +20,15 @@ const DATA_TAG_TYPES = {
 class TagEditor {
 
   static edit(tag, options){
-    if ( undefined === tag.editor ) tag.editor = new TagEditor(tag)
-    tag.editor.show(options)
+    if ( this.anEditorIsOpened ) {
+      console.warn("Un tag est déjà édité, je ne peux pas en éditer un autre")
+    } else {
+      if ( undefined === tag.editor ) tag.editor = new TagEditor(tag)
+      tag.editor.show(options)
+    }
   }
+
+  static get anEditorIsOpened(){return !!DGet('.tag.edited')}
 
   /**
     +return+:: [Boolean] true si les données +data+ sont valides,

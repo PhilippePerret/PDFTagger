@@ -11,14 +11,32 @@
   window.onkeyup    = MEvents.onkeyup.bind(MEvents)
   window.onkeydown  = MEvents.onkeydown.bind(MEvents)
 
- */
+**/
 
- function stopEvent(ev){
-   ev.cancelBubble = true
-   ev.stopPropagation()
-   ev.preventDefault()
-   return false
- }
+function stopEvent(ev){
+  ev.cancelBubble = true
+  ev.stopPropagation()
+  ev.preventDefault()
+  return false
+}
+
+window.onkeydown = function onKeyDown(ev){
+  const diff = Number(ev.timeStamp - (window.lastKeyDownTime||0))
+  window.lastKeyDownTime = Number(ev.timeStamp)
+  if (diff < 120){
+    return stopEvent(ev)
+  } else {
+  }
+  window.pressedLetter = ev.key
+  // log(`KEY DOWN : '${ev.key}' (diff: ${diff})`)
+}
+window.onkeyup = function onKeyUp(ev){
+  // log("KEY UP : ", ev.key)
+  delete window.pressedLetter
+  window.pressedLetter = null
+}
+
+
 //
 // const MEvents = {
 //     pour: 'virgule'

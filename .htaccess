@@ -6,7 +6,7 @@ AddHandler cgi-script .rb
 Options +ExecCGI
 Options -Indexes
 
-DirectoryIndex index.rb
+DirectoryIndex index.html
 
 Options +FollowSymlinks
 RewriteEngine on

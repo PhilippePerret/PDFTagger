@@ -23,11 +23,14 @@ class SensibleSection {
 
   onMouseDown(ev){
     log(`-> onMouseDown on ${this.domId}`)
+    // Si un éditeur est ouvert, on empêche la création d'un nouveau
+    // tag
+    if ( TagEditor.anEditorIsOpened ) {
+      return stopEvent(ev)
+    }
     this.mouseDownOK = true
     this.mousedownY = Number(ev.offsetY)
     this.clientYStart = Number(ev.clientY)
-    // this.obj.addEventListener('mouseup', this.onMouseUp.bind(this))
-    // this.obj.addEventListener('mousemove', this.onMouseMove.bind(this))
     this.obj.onmouseup = this.onMouseUp.bind(this)
     this.obj.onmousemove = this.onMouseMove.bind(this)
     this.removeRectangleSection()
@@ -72,7 +75,7 @@ class SensibleSection {
 
     let height = Math.abs(ev.offsetY - this.mousedownY)
     if ( height < 20 ) height = 20 ;
-    PdfDocument.addTagAt({top: (this.mousedownY + this.topAjout), height:height})
+    PdfDocument.addTagAt({top: (this.mousedownY + this.topAjout), height:height, letter:window.pressedLetter})
     return stopEvent(ev)
   }
 

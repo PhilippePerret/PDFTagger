@@ -127,12 +127,16 @@ class Tag {
   **/
   static addNewItem(data) {
     console.log('-> Tag::addNewItem')
-    showBacktrace()
+    // showBacktrace()
     Object.assign(data, {
         id: this.nextId()
       , date: Number(new Date())
     })
-    data.type || (data.type = 'com')
+    // Le type, en fonction de la lettre pressée (if any) et des
+    // settings des raccourcis-souris
+    data.type = this.newTagTypeFor(data)
+    delete data.letter
+    console.log("data.type = '%s'", data.type, data)
     data.content || (data.content = "Nouveau commentaire")
     delete data.left // pas besoin
     const tag = new Tag(data)
@@ -141,6 +145,16 @@ class Tag {
     // On met le tag en édition pour pouvoir le sauver ensuite
     tag.edit({top:data.top, left:data.left})
     return tag
+  }
+
+  static newTagTypeFor(data){
+    if ( data.type ) return data.type
+    if (data.letter) {
+      return PDFTagger.config.letter2type(data.letter)
+    } else {
+      log("- aucune lettre pressée -")
+      return 'com'
+    }
   }
 
   static reset(){
